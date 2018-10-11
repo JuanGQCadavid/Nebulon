@@ -12,7 +12,7 @@
     
     	<label for="nombre">Usuario</label>
     	<input type="text"><br>
-    //vagina    
+
         <label for="">Password</label>
     	<input type="password"><br>
         
