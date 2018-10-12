@@ -52,17 +52,12 @@ class Connection:
 
         # Database cursor
         cursor = self.connection.cursor()
-        
+
         # Query that updates an specified field
-        u_query = 'UPDATE nebulizers SET ' + field + ' = ' + value + ' WHERE id_nebulizer = ' + id_nebulizer + ';'
+        u_query = 'UPDATE nebulizer SET ' + field + ' = ' + value +  ' WHERE id_nebulizer = ' + id_nebulizer + ';'
 
-        print("Query: " + u_query)
+        print('Sending query: ' + u_query)
 
-        # Escpae the values to prevent SQL Injection
-        # query = 'UPDATE TABLE table SET %s = %s WHERE address = %s'
-        # values = ('asd','asd','asd')
-        # cursor.execute(query, values)
-        
         # Making query
         cursor.execute(u_query)
 

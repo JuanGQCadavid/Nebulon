@@ -13,12 +13,12 @@ if __name__ == '__main__':
 
     
     # Connecting to database
-    connection = Connection('root', 'pass', '127.0.0.1', 'nebulon_database')
+    connection = Connection('root', 'e1bab14fd64', '127.0.0.1', 'nebulon_database')
 
     while True:
 
         # Make update (liquid_level)
-        connection.updateField('liquid_level', str(generateRandom()), str(0))
+        connection.updateField('liquid_level', str(generateRandom()),str(0))
         # Send that information each 5 seconds
         time.sleep(5)
 
