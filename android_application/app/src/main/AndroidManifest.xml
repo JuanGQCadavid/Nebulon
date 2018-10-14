@@ -16,7 +16,15 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".HomePage"></activity>
+        <activity android:name=".HomePage" />
+        <activity
+            android:name=".menu_despegable"
+            android:label="@string/title_activity_menu_despegable"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".schedule"
+            android:label="@string/title_activity_schedule"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>

@@ -16,14 +16,14 @@ public class Welcome extends AppCompatActivity {
     }
 
     public void sendMessage(View view) {
-        /*
-        Intent intent = new Intent(this, HomePage.class);
-        EditText editText = (EditText) findViewById(R.id.input_user);
-        String message = editText.getText().toString();
-        intent.putExtra(EXTRA_MESSAGE, message);
-        startActivity(intent);*/
 
-        TextView textView = findViewById(R.id.textView5);
-        textView.setVisibility(View.VISIBLE);
+        Intent intent = new Intent(this, menu_despegable.class);
+        /*EditText editText = (EditText) findViewById(R.id.input_user);
+        String message = editText.getText().toString();
+        intent.putExtra(EXTRA_MESSAGE, message);*/
+        startActivity(intent);
+
+        //TextView textView = findViewById(R.id.textView5);
+        //textView.setVisibility(View.VISIBLE);
     }
 }
