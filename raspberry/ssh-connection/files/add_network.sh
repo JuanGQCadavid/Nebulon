@@ -46,8 +46,6 @@ function add_network {
 
 type=$1
 new_ssid=$2
-new_password=$3
-new_user=$4
 
 if [ $type -eq 0 ]
 then
@@ -57,11 +55,14 @@ then
 elif [ $type -eq 1 ]
 then
     
+    new_password=$3
     add_network $new_ssid $new_password
     
 elif [ $type -eq 2 ]
 then
-    
+
+    new_user=$3
+    new_password=$4
     add_network $new_ssid $new_user $new_password
     
 else
