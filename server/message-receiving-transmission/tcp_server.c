@@ -6,8 +6,13 @@
 #include <arpa/inet.h> // inet_aton()
 #include <unistd.h> //close()
 
-#define PORT 55555
+#define PORT 17777
+
+// Maximum waiting queue
 #define BACKLOG 100
+
+// Check /proc/sys/net/core/rmem_default for buffer values for recv()
+// Check /proc/sys/net/core/wmem_default for buffer values for send()
 #define MAX_MESSAGE_SIZE 5000
 
 int
@@ -33,7 +38,7 @@ main(){
   //inet_aton("0.0.0.0", &server_addr.sin_addr.s_addr); //takes the ip and v
   server_addr.sin_addr.s_addr = INADDR_ANY;
 
-  // Bind socket to address and port
+  // Binds a socket to address and port
   if( bind(server_socket, (struct sockaddr *) &server_addr, sizeof(server_addr)) == -1 ){
     perror("Error binding socket");
     exit(1);
@@ -57,25 +62,61 @@ main(){
     struct sockaddr_in client_addr;
     int client_socket;
     int addr_size = sizeof(client_addr);
+    //Accepts the connection and puts the address of the client in client_addr
     client_socket = accept(server_socket, (struct sockaddr *) &client_addr, (socklen_t *) &addr_size);
     
     if(client_socket == -1){
-      perror("Error receiving connection from client");
+      perror("Error accepting connection from client");
       exit(1);
     }
-    printf("Connection from client accepted");
+    printf("Connection from client accepted!\n");
 
-    // Receiving message from client
-    char client_message[MAX_MESSAGE_SIZE];
-    int read_size = recv(client_socket, client_message, MAX_MESSAGE_SIZE, 0);
-
-    if(read_size == -1){
-      perror("Error receiving message from client");
+    // Receiving message size from client
+    char message_size[10]; //Size of the message that the client will send
+    int numbers_read;
+    if((numbers_read = recv(client_socket, message_size, 10, 0)) == -1){
+      perror("Error receiving message size");
       exit(1);      
     }
-    printf("Message received!\n");
+    
+    message_size[numbers_read] = '\0';
+    int size = atoi(message_size);
+    
+    printf("Message size received: %d\n", size);
 
-    printf("Message:\n%s", client_message);
+    // Receiving client message
+    
+    char client_message[MAX_MESSAGE_SIZE];
+    //receives the message and stores it in client_message
+    int read_size = 0;
+    while(read_size < size){
+
+      // Handles the currrent read size
+      // Without this, if the message sent by the client is shorther than size,
+      // it will get stucked in an infinite loop printing messages
+      int current_read_size;
+      current_read_size += recv(client_socket, client_message, MAX_MESSAGE_SIZE, 0);
+
+      read_size += current_read_size;
+
+      // Nothing in input
+      if(current_read_size == 0)
+	break;
+      
+      printf(client_message);
+    }
+
+    if(read_size == 0){
+      printf("Client disconnected. Message not sent from client!\n");
+      
+    }else if(read_size == -1){
+      
+      perror("Error receiving message from client");
+      exit(1);
+      
+    }else if(read_size == size)
+      printf("Message completely received!\n");
+
   }
   
   close(server_socket);
