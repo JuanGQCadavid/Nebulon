@@ -1,5 +1,5 @@
 all:
-	gcc tcp_message_reception.c -o bin
+	gcc tcp_server.c -o bin
 
 clean:
 	rm -rf *~
