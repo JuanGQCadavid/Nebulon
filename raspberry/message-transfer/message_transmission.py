@@ -18,7 +18,7 @@ if __name__ == '__main__':
     while True:
 
         # Make update (liquid_level)
-        connection.updateField('liquid_level', str(generateRandom()),str(0))
+        connection.updateField('nebulon_liquid_level', str(generateRandom()),str(0))
         # Send that information each 5 seconds
         time.sleep(5)
 

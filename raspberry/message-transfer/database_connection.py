@@ -48,13 +48,13 @@ class Connection:
     # - liquid_level or state
     def updateField(self, field, value, id_nebulizer):
 
-        # Field should take only two values: liquid_level, state
+        # Field should take only two values: nebulon_liquid_level, nebulon_state
 
         # Database cursor
         cursor = self.connection.cursor()
 
         # Query that updates an specified field
-        u_query = 'UPDATE nebulizer SET ' + field + ' = ' + value +  ' WHERE id_nebulizer = ' + id_nebulizer + ';'
+        u_query = 'UPDATE nebulon SET ' + field + ' = ' + value +  ' WHERE nebulon_id = ' + id_nebulizer + ';'
 
         print('Sending query: ' + u_query)
 

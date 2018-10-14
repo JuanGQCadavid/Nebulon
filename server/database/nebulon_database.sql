@@ -2,39 +2,73 @@ CREATE DATABASE IF NOT EXISTS nebulon_database;
 
 USE nebulon_database;
 
-CREATE TABLE IF NOT EXISTS administrator(
-  id_administrator varchar(20) NOT NULL,
-  aname varchar(50) NOT NULL,
-  email varchar(50) NOT NULL,
-  phones varchar(150) NOT NULL,
-  PRIMARY KEY(id_administrator)
+CREATE TABLE IF NOT EXISTS company(
+  company_id int NOT NULL,
+  company_name varchar(45) NOT NULL,
+  company_address varchar(45) NOT NULL,
+  company_state varchar(45),
+  PRIMARY KEY(company_id)
 );
 
-CREATE TABLE IF NOT EXISTS contract(
-  id_contract int(9) NOT NULL,
-  starting_date date NOT NULL,
-  ending_date date NOT NULL,
-  id_administrator varchar(20) NOT NULL,
-  PRIMARY KEY(id_contract),
-  CONSTRAINT fk_contract_id_administrator FOREIGN KEY(id_administrator) REFERENCES administrator(id_administrator)
+CREATE TABLE IF NOT EXISTS company_contact(
+  contact_id int NOT NULL,
+  contact_name varchar(45) NOT NULL,
+  contact_phone varchar(45) NOT NULL,
+  contact_extra_info varchar(45),
+  contact_roll varchar(45),
+  company_id int NOT NULL,
+  PRIMARY KEY(contact_id),
+  CONSTRAINT fk_company_contact_company_id FOREIGN KEY(company_id) REFERENCES company(company_id)
 );
 
-CREATE TABLE IF NOT EXISTS companie(
-  id_company int(9) NOT NULL,
-  cname varchar(50) NOT NULL,
-  address varchar(50) NOT NULL,
-  email varchar(50) NOT NULL,
-  phones varchar(150) NOT NULL,
-  id_contract int(9) NOT NULL,
-  PRIMARY KEY(id_company),
-  CONSTRAINT fk_companie_id_contract FOREIGN KEY(id_contract) REFERENCES contract(id_contract)  
+CREATE TABLE IF NOT EXISTS loan(
+  loan_id int NOT NULL,
+  company_id int NOT NULL,
+  loan_starting_date timestamp NOT NULL,
+  loan_ending_date timestamp NOT NULL,
+  loan_state float NOT NULL,
+  loan_description varchar(45),
+  PRIMARY KEY(loan_id),
+  CONSTRAINT fk_loan_company_id FOREIGN KEY(company_id) REFERENCES company(company_id)
 );
 
-CREATE TABLE IF NOT EXISTS nebulizer(
-  id_nebulizer int(9) NOT NULL,
-  liquid_level float(10, 5),
-  nstate boolean NOT NULL,
-  id_contract int(9),
-  PRIMARY KEY(id_nebulizer),
-  CONSTRAINT fk_nebulizer_id_contract FOREIGN KEY(id_contract) REFERENCES contract(id_contract)
+CREATE TABLE IF NOT EXISTS payment(
+  payment_id int NOT NULL,
+  loan_id int NOT NULL,
+  payment_date timestamp NOT NULL,
+  payment_amount float NOT NULL,
+  payment_description varchar(45),
+  payment_photo varchar(45),
+  PRIMARY KEY(payment_id),
+  CONSTRAINT fk_payment_loan_id FOREIGN KEY(loan_id) REFERENCES loan(loan_id)
+);
+
+CREATE TABLE IF NOT EXISTS nebulon_spec(
+  spec_id int NOT NULL,
+  spec_vendor varchar(45) NOT NULL,
+  spec_engine_code varchar(45) NOT NULL,
+  spec_size varchar(45),
+  PRIMARY KEY(spec_id)
+);
+
+CREATE TABLE IF NOT EXISTS nebulon(
+  nebulon_id int NOT NULL,
+  nebulon_state varchar(45) NOT NULL,
+  nebulon_liquid_level int NOT NULL,
+  nebulon_purchase_date timestamp,
+  spec_id int NOT NULL,
+  loan_id int NOT NULL,
+  PRIMARY KEY(nebulon_id),
+  CONSTRAINT fk_nebulon_spec_id FOREIGN KEY(spec_id) REFERENCES nebulon_spec(spec_id),
+  CONSTRAINT fk_nebulon_loan_id FOREIGN KEY(loan_id) REFERENCES loan(loan_id)
+);
+
+CREATE TABLE IF NOT EXISTS staff(
+  staff_id int NOT NULL,
+  staff_email varchar(45) NOT NULL,
+  staff_password varchar(45) NOT NULL,
+  staff_grade int NOT NULL,
+  staff_name varchar(45) NOT NULL,
+  staff_phone varchar(45),
+  PRIMARY KEY(staff_id)
 );
