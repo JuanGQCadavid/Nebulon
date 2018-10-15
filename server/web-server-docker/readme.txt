@@ -19,7 +19,8 @@ NEEDED TO RUN DOCKER
      This message shows that your installation appears to be working correctly.
      ...
 
-5. After you have created your Dockerfile and you have all the files needed run:
+5. After you have created your Dockerfile and you have all the files needed, run:
+   $ cd web-server
    $ docker build -t <arbitrary-image-name> .
    $ docker run [-p hostPortThatWillBeExposed:portExposedInContainer] <your-image-name>
    
@@ -54,3 +55,9 @@ DOCKERFILE TAGS
   
 - RUN tells Docker which additional commands to execute.
 - CMD tells Docker to execute the command when the image loads.
+
+------------------------
+
+HTTP REQUESTS WITH NETCAT
+
+$ printf "GET / HTTP/1.1\r\nUser-Agent: nc/0.7.1\r\nHost: 127.0.0.1\r\nAccept: */*\r\n\r\n" | nc 127.0.0.1 5000

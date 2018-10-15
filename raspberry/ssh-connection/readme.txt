@@ -1,7 +1,9 @@
 IMPORTANT THINGS TO BE ABLE TO GET CONNECTED
 
 1. Units wpa_supplicant@wlan0.service, dhcpcd.service, ssh.service enabled
+     
 2. Package 'sleep', 'openssl' installed
+
 3. Create ca_cert in the following path /etc/cert/ca.pem
    $ openssl genrsa -des3 -out ca.key 2048
      - private key pass: nebulon-private-key
@@ -18,6 +20,9 @@ IMPORTANT THINGS TO BE ABLE TO GET CONNECTED
   - ./connectin.sh seconds 0 SSID
   - ./connectin.sh seconds 1 SSID PASS
   - ./connectin.sh seconds 2 SSID USER PASS
+
+  - This script helps the mobile app to close the ssh connection before the
+    system daemons are restarted
   
 ----------------------------
 
@@ -25,29 +30,30 @@ IMPLEMENTATION
 
 1. Have in the raspi a static wpa.conf with the nebulon network.
    -> static_wpa_supplicant.conf
+   -> ssid="nebulon", psk="nebulon-hotspot", key_mgmt=WPA-PSK
    
 2. Have in the raspi a volatile wpa.conf with the nebulon network.
-   -> wpa_supplicant.conf
+   -> wpa_supplicant-wlan0.conf
 
 3. Create a script that writes the general network configuration into
-   wpa_supplicant.conf receiving parameters and followed by the nebulon
+   wpa_supplicant-wlan0.conf receiving parameters and followed by the nebulon
    network.
    -> add_network.sh
 
 4. Call that script from a C program and compile the program
-   $ run make from the ~/Workspace/Nebulon/shh directory
+   $ run make from the ~/Workspace/Nebulon/shh-connection/files directory
+   
+   - The make compiles and gives the user ID necessary permissions to the binary
 
-5. Give user ID permissions to that binary, and switch user:group to root:root
+5. Run the script connectin.sh
 
-6. Run the script connectin.sh
-
-7. Exit ssh connection (this from the app)
+6. Exit ssh connection (this from the app)
 
 ---------------------------
 
 IF THE NEBULIZER GOES OUT OF INTERNET
 
-1. Create a script that reinitilizes the wpa_supplicant.service if there is
+1. Create a script that reinitilizes the wpa_supplicant@wlan0.service if there is
    NOT internet connection. If there is internet connection do nothing.
    -> cron_try_again.sh
 

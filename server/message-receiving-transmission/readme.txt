@@ -2,8 +2,13 @@ COMPILE AND RUN THE SERVER
 
 1. Install the packages 'gcc' and 'make'.
 2. run
+   $ cd files/
    $ make
    $ ./bin
+
+-------------------------
+
+** SERVER ADMINISTRATION **
 
 KILL THE SERVER
 
@@ -11,7 +16,8 @@ KILL THE SERVER
 
 PACKAGES TO USE NETSTAT AND KILL PROCESSES ON PORTS
 
-1. Install 'net-tools' package or 'netstat'
+1. Install 'net-tools' package or the 'netstat'.
+
 2. to identify PIDs using sockets on port 17777
    $ sudo netstat -p | grep 17777
 
