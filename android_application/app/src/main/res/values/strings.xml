@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">Setting  Up</string>
+    <string name="user_name">Enter your user email</string>
+    <string name="user_password">Enter your password</string>
+    <string name="button_send">Send</string>
+    <string name="button_recover">Forgot your Password?</string>
+    <string name="switch_session">Remember me</string>
+    <string name="text_wrong">Wrong user credential</string>
+</resources>
+
+
