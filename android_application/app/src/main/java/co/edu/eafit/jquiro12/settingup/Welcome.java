@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class Welcome extends AppCompatActivity {
     public static final String EXTRA_MESSAGE = "co.edu.eafit.jquiro12.settingup.MESSAGE";
@@ -23,6 +24,12 @@ public class Welcome extends AppCompatActivity {
         intent.putExtra(EXTRA_MESSAGE, message);
         startActivity(intent);*/
 
+        Intent intent = new Intent(this, HomePage.class);
+        startActivity(intent);
+    }
+
+    public void wrongCredentials(){
+        //Toast().show();
         TextView textView = findViewById(R.id.textView5);
         textView.setVisibility(View.VISIBLE);
     }

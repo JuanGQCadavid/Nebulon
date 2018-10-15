@@ -27,10 +27,14 @@ public class HomePage extends AppCompatActivity {
     }
 
     public void installNebulon(View view) {
+        Intent intent = new Intent(this, Nebulizer_founded.class);
+        startActivity(intent);
 
 
     }
 
     public void log_out(View view) {
+        Intent intent = new Intent(this, Welcome.class);
+        startActivity(intent);
     }
 }

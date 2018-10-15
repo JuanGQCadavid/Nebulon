@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+
+    android:orientation="vertical"
+    android:gravity="center|top"
+
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Nebulizer_founded">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center">
+
+        <ImageView
+
+
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/back"
+            android:onClick="Next"/>
+
+        <TextView
+            android:layout_margin="30sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="20sp"
+            android:textAlignment="center"
+            android:text="Nebulizadores\nencontrados"/>
+
+
+        <ImageView
+
+
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/next"
+            android:onClick="Back"
+            />
+
+
+    </LinearLayout>
+
+    <ListView
+        android:id="@+id/nebulizers_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        >
+
+
+    </ListView>
+
+
+
+
+
+
+
+</LinearLayout>
