@@ -15,7 +15,7 @@
     	<label for="nombre">ID: </label>
     	<input type="text"><br>
         
-        <label for="">Name:</label>
+        <label for="">Factory:</label>
     	<input type="text"><br>
         
         
