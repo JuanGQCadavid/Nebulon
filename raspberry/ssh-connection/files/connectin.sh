@@ -20,7 +20,7 @@ then
     
     ./add_network_bin $2 $3 $4
     
-elif [ $type -eq 2 ]
+elif [ $2 -eq 2 ]
 then
     
     ./add_network_bin $2 $3 $4 $5    
