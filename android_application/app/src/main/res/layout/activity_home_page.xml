@@ -1,28 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:gravity="center|top"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".HomePage">
 
-    <TextView
-        android:id="@+id/textView"
+    <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="TextView"
-        android:textColor="@color/colorPrimary"
-        android:textSize="70sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:src="@drawable/logo"
+        android:layout_margin="15sp"/>
 
     <Button
-        android:id="@+id/button2"
+        android:layout_margin="20sp"
+        android:id="@+id/install_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Button"
+        android:onClick="installNebulon"
+        android:text="Instalar Nebulon"
         tools:layout_editor_absoluteX="134dp"
         tools:layout_editor_absoluteY="261dp" />
-</android.support.constraint.ConstraintLayout>
+
+    <Button
+        android:id="@+id/log_out_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="log_out"
+        android:text="Salir."
+        tools:layout_editor_absoluteX="134dp"
+        tools:layout_editor_absoluteY="261dp" />
+</LinearLayout>

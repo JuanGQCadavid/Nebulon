@@ -3,6 +3,7 @@ package co.edu.eafit.jquiro12.settingup;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.TextView;
 
 public class HomePage extends AppCompatActivity {
@@ -23,5 +24,17 @@ public class HomePage extends AppCompatActivity {
 */
 
 
+    }
+
+    public void installNebulon(View view) {
+        Intent intent = new Intent(this, Nebulizer_founded.class);
+        startActivity(intent);
+
+
+    }
+
+    public void log_out(View view) {
+        Intent intent = new Intent(this, Welcome.class);
+        startActivity(intent);
     }
 }
