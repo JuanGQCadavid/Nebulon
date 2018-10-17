@@ -16,13 +16,31 @@
         android:orientation="horizontal"
         android:gravity="center">
 
-        <ImageView
 
-
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/back"
-            android:onClick="Next"/>
+            android:orientation="vertical">
+
+            <ImageView
+
+
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/back"
+                android:onClick="Back"/>
+
+            <TextView
+                android:layout_gravity="center"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Atras"
+                />
+
+        </LinearLayout>
+        
+
+
 
         <TextView
             android:layout_margin="30sp"
@@ -33,14 +51,27 @@
             android:text="Nebulizadores\nencontrados"/>
 
 
-        <ImageView
-
-
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/next"
-            android:onClick="Back"
-            />
+            android:orientation="vertical">
+
+            <ImageView
+
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/next"
+                android:onClick="Next"
+                />
+
+            <TextView
+                android:layout_gravity="center"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Siguiente"
+                />
+
+        </LinearLayout>
 
 
     </LinearLayout>
