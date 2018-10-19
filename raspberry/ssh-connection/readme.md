@@ -9,6 +9,8 @@
    3.1 private key pass: nebulon-private-key
    ``` $ openssl req -x509 -new -nodes -key ca.key -sha256 -days 1825 -out ca.pem ```
 
+3. Give execution permissions to add_network.sh
+
 4. Arguments for the binary add_network_bin
 
   - Opened network: ``` ./add_network_bin 0 SSID ```
