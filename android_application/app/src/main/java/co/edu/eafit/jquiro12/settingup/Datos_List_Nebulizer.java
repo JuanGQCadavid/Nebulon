@@ -1,16 +1,18 @@
 package co.edu.eafit.jquiro12.settingup;
 
-public class Datos_List_Nebulizer {
+import java.io.Serializable;
+
+
+public class Datos_List_Nebulizer implements Serializable {
     private int id;
     private String id_title;
     private String mac_title;
-    private boolean selected_option;
 
-    public Datos_List_Nebulizer(int id, String id_title, String mac_title, boolean selected_option){
+
+    public Datos_List_Nebulizer(int id, String id_title, String mac_title){
         this.id = id;
         this.id_title = id_title;
         this.mac_title = mac_title;
-        this.selected_option = selected_option;
     }
 
 
@@ -38,11 +40,4 @@ public class Datos_List_Nebulizer {
         this.mac_title = mac_title;
     }
 
-    public boolean isSelected_option() {
-        return selected_option;
-    }
-
-    public void setSelected_option(boolean selected_option) {
-        this.selected_option = selected_option;
-    }
 }
