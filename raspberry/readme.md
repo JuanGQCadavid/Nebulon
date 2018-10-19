@@ -3,6 +3,8 @@
 - Raspbian GNU/Linux 9 (Stretch)
 - Image: <date>-rasbian-stretch-lite.img. It has the same functionalities as the desktop image, but without the desktop environment.
 
+-------------------------------
+
 ### Install Raspbian in SD card
 
 1. Download the image from: https://www.raspberrypi.org/downloads/raspbian/
@@ -14,3 +16,7 @@
    5.1 You might have to enable ssh daemon.
 6. Connect it to the internet and run ``` $ sudo apt-get update ``` and ``` $ sudo apt-get upgrade ```
 7. It should work perfectly right now.
+
+--------------------------------
+
+## Important! -> Download the repository: https://github.com/JuanGQCadavid/Nebulon.git
