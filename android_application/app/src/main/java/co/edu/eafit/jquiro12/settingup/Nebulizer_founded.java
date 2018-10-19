@@ -10,9 +10,12 @@ import android.widget.ListView;
 import android.widget.Switch;
 import android.widget.Toast;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 public class Nebulizer_founded extends AppCompatActivity {
+
+    public final String CODE = "co.edu.eafit.jquiro12.settingup.Nebulizer_founded.nebulonList";
     ListView listView;
     ArrayList<Datos_List_Nebulizer> lista;
     @Override
@@ -44,6 +47,16 @@ public class Nebulizer_founded extends AppCompatActivity {
     public void next(View view) {
         ArrayList<Datos_List_Nebulizer>  nebulones_to_configure = localizeSelectedNebulones(listView);
 
+        System.out.println("PENDIENTE");
+        for (Datos_List_Nebulizer datoActual: nebulones_to_configure){
+            System.out.println(datoActual.getId_title());
+
+        }
+
+        Intent intent = new Intent(this, ConfigureNebulones.class);
+        intent.putExtra("sup", (Serializable) nebulones_to_configure);
+        startActivity(intent);
+
     }
 
     /*
@@ -72,7 +85,7 @@ public class Nebulizer_founded extends AppCompatActivity {
         ArrayList<Datos_List_Nebulizer> checked_nebulones = new ArrayList<>();
 
         // The number of elements stored in the list.
-        int child_number = listImplemented.getChildCount();
+        int child_number = listImplemented.getCount();
 
         System.out.println(child_number);
 

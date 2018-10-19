@@ -1,6 +1,9 @@
 package co.edu.eafit.jquiro12.settingup;
 
-public class Datos_List_Nebulizer {
+import java.io.Serializable;
+
+
+public class Datos_List_Nebulizer implements Serializable {
     private int id;
     private String id_title;
     private String mac_title;
