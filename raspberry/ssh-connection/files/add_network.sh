@@ -30,8 +30,7 @@ function add_network {
 	 # PEAP: Protected Extensible Authentication Protocol
 
 	echo -n -e "\"$1\"\n\tscan_ssid=1\n\tkey_mgmt=WPA-EAP\n\teap=PEAP\n\t" >> /etc/wpa_supplicant/wpa_supplicant-wlan0.conf
-	echo -n -e "identity=\"$2\"\n\tpassword=\"$3\"\n\tca_cert=\"/etc/cert/ca.pem\"" >> /etc/wpa_supplicant/wpa_supplicant-wlan0.conf
-	echo -n -e "\n\tphase1=\"peaplabel=0\"\n\tphase2=\"auth=MSCHAPV2\"" >> /etc/wpa_supplicant/wpa_supplicant-wlan0.conf
+	echo -n -e "identity=\"$2\"\n\tpassword=\"$3\"" >> /etc/wpa_supplicant/wpa_supplicant-wlan0.conf
 	
     fi
 
