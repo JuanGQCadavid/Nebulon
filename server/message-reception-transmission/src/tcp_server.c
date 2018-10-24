@@ -1,9 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h> // memset()
 
 #include <sys/socket.h> // socket(), bind(), listen(), accept(), inet_aton()
 #include <netinet/in.h> // struct sockaddr_in, inet_aton()
-#include <arpa/inet.h> // inet_aton()
+#include <arpa/inet.h> // inet_pton()
 #include <unistd.h> //close()
 
 #define PORT 17777
@@ -31,19 +32,33 @@ main(){
   }
   printf("Socket correctly opened!\n");
 
-  // Server address
+  // Server address -------------
   struct sockaddr_in server_addr;
   server_addr.sin_family = AF_INET;
   server_addr.sin_port = htons(PORT);
-  //inet_aton("0.0.0.0", &server_addr.sin_addr.s_addr); //takes the ip and v
-  server_addr.sin_addr.s_addr = INADDR_ANY;
+  //server_addr.sin_addr.s_addr = INADDR_ANY;
+  // converts the dotted ip into network byte order
+  if( inet_pton(AF_INET, "0.0.0.0", &(server_addr.sin_addr)) != 1 ){
+    perror("inet_pton error");
+    exit(1);
+  }
+  // server_addr.sin_zero: padding array to make sockaddr_in equal in size to
+  // sockaddr
+  memset(server_addr.sin_zero, 0, sizeof(server_addr.sin_zero));
 
-  // Binds a socket to address and port
-  if( bind(server_socket, (struct sockaddr *) &server_addr, sizeof(server_addr)) == -1 ){
+  //End server address -----------
+
+  // Binds a socket to address and port ---------
+  
+  if( bind(server_socket, (struct sockaddr *) &server_addr, sizeof(server_addr) ) == -1 ){
     perror("Error binding socket");
     exit(1);
   }
   printf("Socket correctly binded!\n");
+
+  // End bind() -----------------
+
+  // listen() ------------------
   
   // Tells the OS to listen in this socket
   // 100: backlog: how many to enqueue
@@ -53,15 +68,19 @@ main(){
   }
   printf("Socket listening!\n");
 
+  // End listen() ------------------
+
+  // Accepting and receiving connections ---------
   while(1){
 
     printf("Waiting for connections...\n");
     
-    // Receiving connection from client (mobile app)
+    // Receiving connection from client
 
     struct sockaddr_in client_addr;
     int client_socket;
     int addr_size = sizeof(client_addr);
+    
     //Accepts the connection and puts the address of the client in client_addr
     client_socket = accept(server_socket, (struct sockaddr *) &client_addr, (socklen_t *) &addr_size);
     
@@ -71,13 +90,18 @@ main(){
     }
     printf("Connection from client accepted!\n");
 
+    // End accept() -----------
+
     // Receiving message size from client
+    
     char message_size[10]; //Size of the message that the client will send
     int numbers_read;
     if((numbers_read = recv(client_socket, message_size, 10, 0)) == -1){
       perror("Error receiving message size");
       exit(1);      
     }
+
+    // End recv() ----------------
     
     message_size[numbers_read] = '\0';
     int size = atoi(message_size);
@@ -118,6 +142,8 @@ main(){
       printf("Message completely received!\n");
 
   }
+
+  // End accepting and receiving connections ---------	
   
   close(server_socket);
 
