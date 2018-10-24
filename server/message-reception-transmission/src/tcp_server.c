@@ -7,10 +7,12 @@
 #include <arpa/inet.h> // inet_pton()
 #include <unistd.h> //close()
 
-#define PORT 17777
+
+// Ports under 1024 are reserved, and you can use them only if you are ROOT
+#define PORT "17777"
 
 // Maximum waiting queue
-#define BACKLOG 100
+#define BACKLOG 10
 
 // Check /proc/sys/net/core/rmem_default for buffer values for recv()
 // Check /proc/sys/net/core/wmem_default for buffer values for send()
@@ -19,50 +21,64 @@
 int
 main(){
 
-  // AF_INET: Internet socket
-  // SOCK_STREAM: Connection oriented socket
-  // 6: TCP protocol (/etc/protocols)
-  int server_socket = socket(AF_INET, SOCK_STREAM, 6);
+  // getaddrinfo() ----------------
 
-  // Error checking
-  if(server_socket == -1){
-    // Prints this message followed by the last library error encountered
-    perror("Error opening socket");
+  int gai_status; // Holds the status that getaddrinfo() returns
+  // hints used by getaddrinfo, results (linked list) where the addresses will be saved
+  struct addrinfo hints, *result;
+
+  memset( &hints, 0, sizeof(hints) ); // make sure that hints is empty
+  /* AI_PASSIVE: address for a socket that will be bind()ed, that will listen
+  on all interfaces (INADDR_ANY, IN6ADDR_ANY_INIT), NOTE: this only if parameter
+  node in getaddrinfo = NULL */
+  hints.ai_flags = AI_PASSIVE;
+  hints.ai_family = AF_UNSPEC; // ipv4 or ipv6
+  hints.ai_socktype = SOCK_STREAM; // tcp
+  hints.ai_protocol = 6; // 6: TCP protocol (/etc/protocols)
+
+  if( (gai_status = getaddrinfo(NULL, PORT, &hints, &result)) != 0 ){
+    fprintf(stderr, "getaddrinfo() error: %s", gai_strerror(gai_status));
     exit(1);
   }
-  printf("Socket correctly opened!\n");
-
-  // Server address -------------
-  struct sockaddr_in server_addr;
-  server_addr.sin_family = AF_INET;
-  server_addr.sin_port = htons(PORT);
-  //server_addr.sin_addr.s_addr = INADDR_ANY;
-  // converts the dotted ip into network byte order
-  if( inet_pton(AF_INET, "0.0.0.0", &(server_addr.sin_addr)) != 1 ){
-    perror("inet_pton error");
-    exit(1);
-  }
-  // server_addr.sin_zero: padding array to make sockaddr_in equal in size to
-  // sockaddr
-  memset(server_addr.sin_zero, 0, sizeof(server_addr.sin_zero));
-
-  //End server address -----------
-
-  // Binds a socket to address and port ---------
   
-  if( bind(server_socket, (struct sockaddr *) &server_addr, sizeof(server_addr) ) == -1 ){
-    perror("Error binding socket");
+  // End getaddrinfo() ------------
+
+  // socket() and bind() -------------
+
+  // This server socket file descriptor
+  int server_socket_fd;
+
+  // Try each address until bind() returns success
+  struct addrinfo *it;
+  for(it = result; it != NULL; it = it -> ai_next){
+
+    server_socket_fd = socket(it -> ai_family, it -> ai_socktype,
+			      it -> ai_protocol);
+    // If there was an error opening the socket, try with another addr
+    if( server_socket_fd == -1 )
+      continue;
+
+    if( bind(server_socket_fd, it -> ai_addr, it -> ai_addrlen) == 0 )
+      break; // success bind()ing
+
+    // socket() worked, but bind() didn't, so close it
+    close(server_socket_fd); 
+    
+  }
+
+  // bind() didn't work in any address 
+  if(it == NULL){
+    fprintf(stderr, "Could not bind()");
     exit(1);
   }
-  printf("Socket correctly binded!\n");
-
-  // End bind() -----------------
+  
+  // End socket() and bind() -------------
 
   // listen() ------------------
   
   // Tells the OS to listen in this socket
   // 100: backlog: how many to enqueue
-  if(listen(server_socket, BACKLOG) == -1){
+  if(listen(server_socket_fd, BACKLOG) == -1){
     perror("Error trying to listen");
     exit(1);
   }
@@ -82,7 +98,7 @@ main(){
     int addr_size = sizeof(client_addr);
     
     //Accepts the connection and puts the address of the client in client_addr
-    client_socket = accept(server_socket, (struct sockaddr *) &client_addr, (socklen_t *) &addr_size);
+    client_socket = accept(server_socket_fd, (struct sockaddr *) &client_addr, (socklen_t *) &addr_size);
     
     if(client_socket == -1){
       perror("Error accepting connection from client");
@@ -145,7 +161,7 @@ main(){
 
   // End accepting and receiving connections ---------	
   
-  close(server_socket);
+  close(server_socket_fd);
 
   return 0;
 }
