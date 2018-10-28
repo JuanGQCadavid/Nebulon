@@ -2,6 +2,8 @@ package co.edu.eafit.jquiro12.settingup;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
+import android.os.StrictMode;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -10,12 +12,20 @@ import android.widget.ListView;
 import android.widget.Switch;
 import android.widget.Toast;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.Serializable;
+import java.net.Inet4Address;
+import java.net.InetAddress;
 import java.util.ArrayList;
 
 public class Nebulizer_founded extends AppCompatActivity {
 
     public final String CODE = "co.edu.eafit.jquiro12.settingup.Nebulizer_founded.nebulonList";
+
     ListView listView;
     ArrayList<Datos_List_Nebulizer> lista;
     @Override
@@ -23,18 +33,29 @@ public class Nebulizer_founded extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_nebulizer_founded);
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
 
         //Generate the list
-        lista = findNebulonesConneted();
+        lista = getClientList(); //new ArrayList<>();
+
 
         // Find the view list
         listView = (ListView) findViewById(R.id.nebulizers_list);
+
+        updateData(lista);
 
         //Create the adaptor which is gonna be used
         Adaptador adaptor  = new Adaptador(getApplicationContext(), lista);
 
         //Connect the Adapter to the list.
         listView.setAdapter(adaptor);
+
+        //ClientesConnected p = new ClientesConnected(lista,listView);
+        //p.start();
+
+
+
     }
 
 
@@ -67,6 +88,9 @@ public class Nebulizer_founded extends AppCompatActivity {
         List ones who are Nebulones.
      */
     public ArrayList<Datos_List_Nebulizer>  findNebulonesConneted(){
+
+        getClientList();
+        //getClientListBash();
         ArrayList<Datos_List_Nebulizer> found = new ArrayList<>();
 
 
@@ -79,6 +103,110 @@ public class Nebulizer_founded extends AppCompatActivity {
 
         return found;
     }
+
+    public void getClientListBash(){
+        try {
+            Process process = Runtime.getRuntime().exec("sh script_find.sh");
+            BufferedReader in = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            String listOfFiles = "";
+            String line;
+            while ((line = in.readLine()) != null) {
+                listOfFiles += line;
+            }
+            System.out.println(listOfFiles);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
+    }
+
+    public void updateData(ArrayList<Datos_List_Nebulizer>  dataList){
+        System.out.println("***************************************************");
+        BufferedReader br = null;
+        ArrayList<Datos_List_Nebulizer> found = new ArrayList<>();
+
+        String flushCmd = "sh ip -s -s neigh flush all";
+        Runtime runtime = Runtime.getRuntime();
+        try
+        {
+            runtime.exec(flushCmd,null,new File("/proc/net"));
+        }catch (Exception e){
+
+        }
+
+        try {
+
+            String ip, mac;
+            int id = 0;
+            br = new BufferedReader(new FileReader("/proc/net/arp"));
+            String line;
+
+            int lineCount= 0;
+            while ((line = br.readLine()) != null) {
+                lineCount++;
+                if (lineCount == 1)continue;
+                System.out.println(line);
+                String[] splitted = line.split(" +");
+                ip = splitted[0];
+                mac = splitted[3];
+                System.out.println(ip);
+
+                found.add(new Datos_List_Nebulizer(id, ip, mac));
+
+
+
+            }
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+
+        System.out.println("***************************************************");
+
+    }
+
+    public ArrayList<Datos_List_Nebulizer> getClientList() {
+
+
+        System.out.println("***************************************************");
+        BufferedReader br = null;
+        ArrayList<Datos_List_Nebulizer> found = new ArrayList<>();
+
+        String flushCmd = "sh ip -s -s neigh flush all";
+        Runtime runtime = Runtime.getRuntime();
+        try
+        {
+            runtime.exec(flushCmd,null,new File("/proc/net"));
+        }catch (Exception e){
+
+        }
+
+        try {
+
+            String ip, mac;
+            int id = 0;
+            br = new BufferedReader(new FileReader("/proc/net/arp"));
+            String line;
+
+            int lineCount= 0;
+            while ((line = br.readLine()) != null) {
+                lineCount++;
+                if (lineCount == 1)continue;
+                System.out.println(line);
+                String[] splitted = line.split(" +");
+                ip = splitted[0];
+                mac = splitted[3];
+                System.out.println(ip);
+            }
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+
+        System.out.println("***************************************************");
+        return found;
+    }
+
 
     public ArrayList<Datos_List_Nebulizer> localizeSelectedNebulones(ListView listImplemented ){
 
@@ -117,5 +245,58 @@ public class Nebulizer_founded extends AppCompatActivity {
 
 
     }
+
 }
+
+/*
+
+ public ArrayList<Datos_List_Nebulizer> getClientList() {
+
+
+        System.out.println("***************************************************");
+        BufferedReader br = null;
+        ArrayList<Datos_List_Nebulizer> found = new ArrayList<>();
+
+        String flushCmd = "sh ip -s -s neigh flush all";
+        Runtime runtime = Runtime.getRuntime();
+        try
+        {
+            runtime.exec(flushCmd,null,new File("/proc/net"));
+        }catch (Exception e){
+
+        }
+
+        try {
+
+            String ip, mac;
+            int id = 0;
+            br = new BufferedReader(new FileReader("/proc/net/arp"));
+            String line;
+
+            int lineCount= 0;
+            while ((line = br.readLine()) != null) {
+                lineCount++;
+                if (lineCount == 1)continue;
+                System.out.println(line);
+                String[] splitted = line.split(" +");
+                ip = splitted[0];
+                mac = splitted[3];
+                System.out.println(ip);
+
+                if(Inet4Address.getByName(ip).isReachable(1500) == true){
+
+                    found.add(new Datos_List_Nebulizer(id, ip, mac));
+
+                }
+
+            }
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+
+        System.out.println("***************************************************");
+        return found;
+    }
+
+ */
 
