@@ -1,0 +1,14 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h> // memset()
+
+#include <sys/socket.h> // socket() bind() listen() accept() inet_aton() getaddrinfo()
+#include <netinet/in.h> // struct sockaddr_in
+#include <arpa/inet.h> // inet_pton()
+#include <netdb.h> // getaddrinfo() freeaddrinfo()
+#include <unistd.h> // close()
+
+#include <signal.h> // sigaction()
+#include <sys/wait.h> // waitpid()
+#include <sys/types.h> // getaddrinfo() waitpid() freeaddrinfo()
+#include <errno.h> // global variable errno
