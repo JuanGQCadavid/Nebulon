@@ -1,5 +1,5 @@
 all:
-	gcc tcp_server.c -o bin
+	g++ -ggdb src/tcp_server.cpp -o bin/bin
 
 clean:
 	rm -rf *~

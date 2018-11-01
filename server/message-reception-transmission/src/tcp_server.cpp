@@ -65,7 +65,7 @@ main(){
 
   // bind() didn't work in any address 
   if(it == NULL){
-    fprintf(stderr, "Could not bind()");
+    fprintf(stderr, "Could not bind()\n");
     exit(1);
   }
   
@@ -124,7 +124,7 @@ main(){
     }
 
     char address[INET6_ADDRSTRLEN];
-    inet_ntop( client_addr.sa_family,
+    inet_ntop( client_addr.ss_family,
 	       get_internet_address( (struct sockaddr*) &client_addr), address, sizeof(address) );
     printf("accept(): Got connection from: %s \n", address);
 
@@ -153,23 +153,45 @@ main(){
 	  
       }else if( bytes_read == 0 ) // no message and peer closed the connection
 	exit(0);
-
+      
       // Obtain message size
       int message_size;
-      get_number_in_header(message, bytes_read, message_size);
+      get_number_in_header(message, &message_size);
 
+      // Read missing part of the message
       while( bytes_read != message_size )
 	
 	bytes_read += recv(client_socket_fd, message + bytes_read, (MAX_MESSAGE_SIZE - 1) - bytes_read, 0);
-	
-      
-      // Message completely received
-      printf("Message from %s completely received", address);
 
-      printf("The message is %s: ", message);
+      message[bytes_read] = '\0'; // null byte to mark the end of the message
+	
+      // Message completely received
+      printf("CHILD: Message from %s completely received\n", address);
+      //printf("CHILD: The message is:\n%s\n", message);
 
       // Analyze data received and store it in MySQL or send it to a nebulizer
+      Document json;
 
+      json.Parse(message);
+
+      if( json.IsObject() && json.HasMember("type") ){
+	
+	const char* type = json["type"].GetString();
+	
+	if( strcmp(type, "neb_to_server") == 0 ){
+
+	  printf("It worked!\n");
+	  
+	}else if(type == "app_to_server"){
+	  
+	}else{
+	  fprintf(stderr, "Message with unrecognized type\n");
+	}
+	
+      }else{
+	fprintf(stderr, "Unrecognized message");
+      }
+     
       close(client_socket_fd);
       exit(0);
 

@@ -1,6 +1,6 @@
 /* Libraries needed */
 
-#include <stdio.h>
+#include <stdio.h> // printf() fprintf()
 #include <stdlib.h> // strtol()
 
 /* Networking, Signaling, Forking */
@@ -18,6 +18,8 @@
 
 /* JSON */
 #include "rapidjson/document.h"
+
+using namespace rapidjson;
 
 /* -------- MACROS -------- */
 
@@ -42,7 +44,7 @@ void signal_handler(int signal);
 void *get_internet_address(struct sockaddr *sa);
 
 /* Stores in 'number' the number in the message's JSON header */
-void get_number_in_header(char* message, int message_size, int &number_of_chars);
+void get_number_in_header(const char* message, int *number_of_chars);
 
 /* -------- END FUNCTION DECALARATION ------- */
 
@@ -61,6 +63,7 @@ signal_handler(int signal){
   while( waitpid(-1, NULL, WNOHANG) > 0 );
 
   errno = errno_temp;
+
 }
 
 void
@@ -76,26 +79,30 @@ void
 }
 
 void
-get_number_in_header(char* message, int message_size, int &number_of_chars){
-  for(int i = 0; i < message_size; ++i){ // it'll never reach message_size
-	
-    if( message[i] == ":" ){
-	  
+get_number_in_header(const char* message, int *number_of_chars){
+
+  // 50: max size of the first line in the json message
+  for(int i = 0; i < 50; ++i){
+    
+    if( message[i] == ':' ){
+      
       // the message_size will never be a 10 digit number
       char number[10];
-	  
-      for(int j = i+1; j < message_size; ++j){ // it'll never reach message_size
-	    
-	if( message[j] != "}")
-	  number[j] = message[j];
-	else{
-	  number[j] = "\0";
-	  break;
-	}
-	    
-      }
 
-      number_of_chars = strtol(number, NULL, 10);
+      int n = 0, j = i+1;
+      while( message[j] != ',' ){
+
+	if( message[j] != ' ' || message[j] != '\t' ){
+	  number[n] = message[j];
+	  ++n;
+	}
+	
+	++j;
+      }
+      number[n+1] = '\0';
+
+      *number_of_chars = strtol(number, NULL, 10);
+      break;
     }
   }
 }
