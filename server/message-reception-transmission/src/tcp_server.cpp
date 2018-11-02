@@ -177,10 +177,31 @@ main(){
       if( json.IsObject() && json.HasMember("type") ){
 	
 	const char* type = json["type"].GetString();
-	
+
+	// Message received from nebulizer
 	if( strcmp(type, "neb_to_server") == 0 ){
 
 	  printf("It worked!\n");
+
+	  std::ifstream db_info("db_info.txt");
+
+	  if( db_info.is_open() ){
+
+	    char* host, user, pass, database;
+
+	    db_info >> user;
+	    db_info >> pass;
+	    db_info >> host;
+	    db_info >> database;
+	    db_info >> port;
+
+	    // Create connection
+	    MySQLConnection mysql(host, user, pass, database, port);
+
+	    
+	    
+	  }else // could not open db info file
+	    fprintf(stderr, "Unable to open database information file\n");
 	  
 	}else if(type == "app_to_server"){
 	  

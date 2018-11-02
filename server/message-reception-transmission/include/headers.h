@@ -1,5 +1,9 @@
+#ifndef HEADERS_H
+#define HEADERS_H
+
 /* Libraries needed */
 
+#include <fstream>
 #include <stdio.h> // printf() fprintf()
 #include <stdlib.h> // strtol()
 
@@ -18,6 +22,9 @@
 
 /* JSON */
 #include "rapidjson/document.h"
+
+/* Connection to MySQL */
+#include "database_connection.h"
 
 using namespace rapidjson;
 
@@ -108,3 +115,5 @@ get_number_in_header(const char* message, int *number_of_chars){
 }
 
 /* -------- END FUNCTION DEFINITION ------- */
+
+#endif

@@ -41,6 +41,19 @@
      
 --------------------------------------
 
+### Compatibility between TCP Server and database
+
+1. Create new user ``` CREATE USER 'nebulonHJGR'@'localhost' IDENTIFIED BY 'password-already-defined'; ```.
+2. Grant UPDATE, SELECT privileges:
+   ``` GRANT UPDATE ON nebulon_database.nebulon TO 'nebulonHJGR'@'localhost'; ```
+   ``` GRANT SELECT ON nebulon_database.nebulon TO 'nebulonHJGR'@'localhost'; ```
+3. Check for granted privileges:
+   ``` SHOW GRANTS FOR 'nebulonHJGR'@'localhost'; ```
+4. If you need to revoke a privilege:
+   ``` REVOKE type_of_permission ON database_name.table_name FROM ‘username’@‘localhost’; ```
+
+--------------------------------------
+
 ### Open Mariadb (Mysql) to the world. (Remote LogIn)
 
 # Guide: https://mariadb.com/kb/en/library/configuring-mariadb-for-remote-client-access/
