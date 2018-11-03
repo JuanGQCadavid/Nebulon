@@ -3,7 +3,8 @@
 
 /* Libraries needed */
 
-#include <fstream>
+#include <fstream> // ifstream
+#include <exception>
 #include <stdio.h> // printf() fprintf()
 #include <stdlib.h> // strtol()
 
@@ -24,7 +25,7 @@
 #include "rapidjson/document.h"
 
 /* Connection to MySQL */
-#include "database_connection.h"
+#include "database_controller.h"
 
 using namespace rapidjson;
 
@@ -44,9 +45,6 @@ using namespace rapidjson;
 
 /* -------- FUNCTION DECALARATION ------- */
 
-/* Signal handler function */
-void signal_handler(int signal);
-
 /* Returns a pointer to the sin_addr structure containing the ip */
 void *get_internet_address(struct sockaddr *sa);
 
@@ -56,22 +54,6 @@ void get_number_in_header(const char* message, int *number_of_chars);
 /* -------- END FUNCTION DECALARATION ------- */
 
 /* -------- FUNCTION DEFINITION ------- */
-
-void
-signal_handler(int signal){
-
-  // waitpid() might change errno value that might be in use by
-  // another function
-  int errno_temp = errno;
-
-  // waitpid(): waits for a child process to terminate and reap it
-  // if you are here is because a child has already termianted, so
-  // it will return immediately
-  while( waitpid(-1, NULL, WNOHANG) > 0 );
-
-  errno = errno_temp;
-
-}
 
 void
 *get_internet_address(struct sockaddr *sa){

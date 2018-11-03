@@ -1,73 +1,39 @@
-/* All the needed libraries, macros, functions are included here */
+/* All the needed libraries, macros, helper functions are included here */
 #include "../include/headers.h"
 
+/* Function to obtain the available addresses and store them in 'result' */
+void obtain_available_addresses(struct addrinfo *&result);
+
+/* Create a socket and bind it to an available address in result */
+void socket_and_bind(int &server_socket_fd, struct addrinfo *result);
+
+/* Function that initializes the signal handling */
+void signal_handling();
+
+/* Signal handler function */
+void signal_handler(int signal);
+
 int
-main(){
+main(int argc, char* argv[]){
+
+  if(argc != 2){
+    printf("Usage: Wrong number of arguments.\nExpected: $ %s <dbinfofile>", argv[0]);
+    exit(1);
+  }
   
   // getaddrinfo() ----------------
 
-  // Holds the status that getaddrinfo() returns
-  int gai_status;
-  // hints used by getaddrinfo, results (linked list) where the addresses will be saved
-  struct addrinfo hints, *result;
-
-  memset( &hints, 0, sizeof(hints) ); // make sure that hints is empty
-  /* AI_PASSIVE: address for a socket that will be bind()ed, that will listen
-  on all interfaces (INADDR_ANY, IN6ADDR_ANY_INIT), NOTE: this only if parameter
-  node in getaddrinfo = NULL */
-  hints.ai_flags = AI_PASSIVE;
-  hints.ai_family = AF_UNSPEC; // ipv4 or ipv6
-  hints.ai_socktype = SOCK_STREAM; // tcp
-  hints.ai_protocol = 6; // 6: TCP protocol (/etc/protocols)
-
-  if( (gai_status = getaddrinfo(NULL, PORT, &hints, &result)) != 0 ){
-    fprintf(stderr, "getaddrinfo() error: %s", gai_strerror(gai_status));
-    exit(1);
-  }
+  struct addrinfo *result;
+  obtain_available_addresses(result);
   
   // END getaddrinfo() ------------
 
   // socket() and bind() -------------
 
   // This server socket file descriptor
+  
   int server_socket_fd;
-
-  // Try each address until bind() returns success
-  struct addrinfo *it;
-  for(it = result; it != NULL; it = it -> ai_next){
-
-    server_socket_fd = socket(it -> ai_family, it -> ai_socktype,
-			      it -> ai_protocol);
-    // If there was an error opening the socket, try with another addr
-    if( server_socket_fd == -1 )
-      continue;
-
-    // If the port is being used by another socket, you can share the same port
-    // setsockopt(): set socket option
-    // SOL_SOCKET: level in the protocol stack where the option is gonna be readed
-    // SO_REUSEADDR: option
-    int yes = 1;
-    if( setsockopt(server_socket_fd, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(int)) == -1 ){
-      perror("setsockopt()");
-      exit(1);
-    }
-
-    if( bind(server_socket_fd, it -> ai_addr, it -> ai_addrlen) == 0 )
-      break; // success bind()ing
-
-    // socket() worked, but bind() didn't, so close it
-    close(server_socket_fd); 
-    
-  }
-
-  // release dinamically alocated linked list
-  freeaddrinfo( result );
-
-  // bind() didn't work in any address 
-  if(it == NULL){
-    fprintf(stderr, "Could not bind()\n");
-    exit(1);
-  }
+  socket_and_bind(server_socket_fd, result);
   
   // END socket() and bind() -------------
 
@@ -85,20 +51,7 @@ main(){
 
   // SIGNAL Handling -----------------------
 
-  // Contains information about which signals handle and how
-  struct sigaction signal_action;
-  signal_action.sa_handler = signal_handler; // how to handle the signal
-  // signals to block, that is,there may be some code in the handler that
-  // shouldn't be interrupted by a signal.
-  // Set it to empty
-  sigemptyset( &signal_action.sa_mask );
-  // System calls interrupted by this signal will be restarted
-  signal_action.sa_flags = SA_RESTART;
-
-  if( sigaction(SIGCHLD, &signal_action, NULL) == -1 ){
-    perror("sigaction()");
-    exit(1);
-  }
+  signal_handling();
   
   // END SIGNAL Handling -------------------
   
@@ -106,6 +59,7 @@ main(){
   while(1){
 
     printf("Waiting for connections...\n");
+
     
     // Receiving connection from client
     
@@ -157,7 +111,7 @@ main(){
       // Obtain message size
       int message_size;
       get_number_in_header(message, &message_size);
-
+      
       // Read missing part of the message
       while( bytes_read != message_size )
 	
@@ -169,51 +123,61 @@ main(){
       printf("CHILD: Message from %s completely received\n", address);
       //printf("CHILD: The message is:\n%s\n", message);
 
-      // Analyze data received and store it in MySQL or send it to a nebulizer
-      Document json;
+      try{
 
-      json.Parse(message);
+	// Analyze data received and store it in MySQL or send it to a nebulizer
+	Document json;
 
-      if( json.IsObject() && json.HasMember("type") ){
+	json.Parse(message);
+
+	if( json.IsObject() && json.HasMember("type") ){
 	
-	const char* type = json["type"].GetString();
+	  const char* type = json["type"].GetString();
 
-	// Message received from nebulizer
-	if( strcmp(type, "neb_to_server") == 0 ){
+	  // Message received from nebulizer
+	  if( strcmp(type, "neb_to_server") == 0 ){
 
-	  printf("It worked!\n");
+	    std::ifstream db_info(argv[1], std::ifstream::in);
 
-	  std::ifstream db_info("db_info.txt");
+	    if( db_info.is_open() ){
 
-	  if( db_info.is_open() ){
+	      std::string host, user, pass, database;
+	      unsigned int port;
 
-	    char* host, user, pass, database;
+	      db_info >> user;
+	      db_info >> pass;
+	      db_info >> host;
+	      db_info >> database;
+	      db_info >> port;
 
-	    db_info >> user;
-	    db_info >> pass;
-	    db_info >> host;
-	    db_info >> database;
-	    db_info >> port;
+	      // Create connection
+	      MySQLConnection mysql(host.c_str(), user.c_str(),
+				    pass.c_str(), database.c_str(), port);
 
-	    // Create connection
-	    MySQLConnection mysql(host, user, pass, database, port);
-
+	      // Make update_query
+	      mysql.update_query( "nebulon", "nebulon_liquid_level",
+				  std::to_string(json["liquid_level"].GetInt()).c_str(), "nebulon_id",
+				  std::to_string(json["id"].GetInt()).c_str() );
 	    
-	    
-	  }else // could not open db info file
-	    fprintf(stderr, "Unable to open database information file\n");
+	    }else // could not open db info file
+	      fprintf(stderr, "Unable to open database information file\n");
 	  
-	}else if(type == "app_to_server"){
+	  }else if(type == "app_to_server"){
 	  
+	  }else{
+	    fprintf(stderr, "Message with unrecognized type\n");
+	  }
+	
 	}else{
-	  fprintf(stderr, "Message with unrecognized type\n");
+	  fprintf(stderr, "Unrecognized message");
 	}
-	
-      }else{
-	fprintf(stderr, "Unrecognized message");
+      
+      }catch(std::exception &e){
+	fprintf(stderr, "CHILD: Exception occured: %s\n", e.what());
       }
-     
+
       close(client_socket_fd);
+      printf("CHILD: Connection from %s closed!\n", address);
       exit(0);
 
       // END recv() --------------------------------
@@ -231,4 +195,108 @@ main(){
   return 0;
 }
 
+/* ---------- MAIN FUNCTIONS ---------- */
+
+void
+obtain_available_addresses(struct addrinfo *&result){
+  // Holds the status that getaddrinfo() returns
+  int gai_status;
+  // hints used by getaddrinfo
+  struct addrinfo hints;
+
+  memset( &hints, 0, sizeof(hints) ); // make sure that hints is empty
+  /* AI_PASSIVE: address for a socket that will be bind()ed, that will listen
+     on all interfaces (INADDR_ANY, IN6ADDR_ANY_INIT), NOTE: this only if parameter
+     node in getaddrinfo = NULL */
+  hints.ai_flags = AI_PASSIVE;
+  hints.ai_family = AF_UNSPEC; // ipv4 or ipv6
+  hints.ai_socktype = SOCK_STREAM; // tcp
+  hints.ai_protocol = 6; // 6: TCP protocol (/etc/protocols)
+
+  // result (linked list) where the addresses will be saved
+  if( (gai_status = getaddrinfo(NULL, PORT, &hints, &result)) != 0 ){
+    fprintf(stderr, "getaddrinfo() error: %s", gai_strerror(gai_status));
+    exit(1);
+  }
+  
+}
+
+void
+socket_and_bind(int &server_socket_fd, struct addrinfo *result){
+
+  // Try each address until bind() returns success
+  struct addrinfo *it;
+  for(it = result; it != NULL; it = it -> ai_next){
+
+    // 0: any protocol
+    server_socket_fd = socket(it -> ai_family, it -> ai_socktype, 0);
+
+    // If there was an error opening the socket, try with another addr
+    if( server_socket_fd == -1 )
+      continue;
+
+    // If the port is being used by another socket, you can share the same port
+    // setsockopt(): set socket option
+    // SOL_SOCKET: level in the protocol stack where the option is gonna be readed
+    // SO_REUSEADDR: option
+    int yes = 1;
+    if( setsockopt(server_socket_fd, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(int)) == -1 ){
+      perror("setsockopt()");
+      exit(1);
+    }
+
+    if( bind(server_socket_fd, it -> ai_addr, it -> ai_addrlen) == 0 )
+      break; // success bind()ing
+
+    // socket() worked, but bind() didn't, so close it
+    close(server_socket_fd); 
+    
+  }
+
+  // release dinamically alocated linked list
+  freeaddrinfo( result );
+
+  // bind() didn't work in any address 
+  if(it == NULL){
+    fprintf(stderr, "Could not bind()\n");
+    exit(1);
+  }  
+}
+
+void signal_handling(){
+  
+  // Contains information about which signals handle and how
+  struct sigaction signal_action;
+  signal_action.sa_handler = signal_handler; // how to handle the signal
+  // signals to block, that is,there may be some code in the handler that
+  // shouldn't be interrupted by a signal.
+  // Set it to empty
+  sigemptyset( &signal_action.sa_mask );
+  // System calls interrupted by this signal will be restarted
+  signal_action.sa_flags = SA_RESTART;
+
+  if( sigaction(SIGCHLD, &signal_action, NULL) == -1 ){
+    perror("sigaction()");
+    exit(1);
+  }
+  
+}
+
+void
+signal_handler(int signal){
+
+  // waitpid() might change errno value that might be in use by
+  // another function
+  int errno_temp = errno;
+
+  // waitpid(): waits for a child process to terminate and reap it
+  // if you are here is because a child has already termianted, so
+  // it will return immediately
+  while( waitpid(-1, NULL, WNOHANG) > 0 );
+
+  errno = errno_temp;
+
+}
+
+/* ---------- END MAIN FUNCTIONS ---------- */
 
