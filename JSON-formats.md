@@ -53,18 +53,7 @@
 
 ## From Mobile App
 
-1. Mobile App requests Nebulon ID
-
-```
-{
-    "message_size" : ###(int),
-    "message_type" : "app_to_neb_idr"
-}
-```
-
-  * app_to_neb_idr stands for app to nebulon id request
-
-2. Mobile App sends script execution order, with the proper Network Parameters
+1. Mobile App sends script execution order, with the proper Network Parameters
 
 ```
 {
@@ -83,7 +72,7 @@
   * network_type : 0 stands for no security, 1 stands for WPA security,
                    2 stands for EAP security
 
-3. Mobile App sends a schedule to be interpreted
+2. Mobile App sends a schedule to be interpreted
 
 ```
 {
@@ -134,6 +123,7 @@
 ## From Remote server
 
 1. Ip addresses that were requested before
+
 ```
 {
     "message_size" : ###(int),
@@ -158,6 +148,8 @@
   * ##.##.##.## indicates the nebulon's private IP(v4 or v6)
   
 ## From Nebulon
+
+1. Nebulon's ID that is sent when the Nebulon gets connected to the app Hotspot
 
 ```
 {
