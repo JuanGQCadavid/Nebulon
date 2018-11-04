@@ -1,4 +1,4 @@
-## THIS FILE DESCRIBES THE FORMATS OF THE JSON THAT ARE USED TO TRANSFER INFORMATION
+## THIS FILE DESCRIBES THE FORMATS OF THE JSON MESSAGES THAT ARE USED TO TRANSFER INFORMATION
 
 -----------------------------
 
@@ -13,7 +13,7 @@
     "message_type" : "neb_to_server_llu",
     "nebulon_id" : ##(int),
     "nebulon_liquid_level" : ###(int)
-```}
+}```
 
   * neb_to_server_llu stands for nebulon to server liquid level update
 
@@ -24,7 +24,7 @@
     "message_type" : "neb_to_server_ipu",
     "nebulon_id" : ##(int),
     "nebulon_liquid_level" : ###(int)
-```}
+}```
 
   * neb_to_server_ipu stands for nebulon to server ip address update
 
@@ -36,7 +36,7 @@
     "message_size" : ###(int),
     "message_type" : "app_to_server_ipr",
     "nebulons_ids" : [##(int), ...],
-```}
+}```
 
   * app_to_server_ipr stands for nebulon to server ip address request
   
@@ -51,7 +51,7 @@
 ```{
     "message_size" : ###(int),
     "message_type" : "app_to_neb_idr"
-```}
+}```
 
   * app_to_neb_idr stands for app to nebulon id request
 
@@ -66,7 +66,7 @@
 	"user" : "NetworkUserName", //only network_type 2
 	"password" : "NetworkPassword" // only network_type 1 and 2 
     }
-```}
+}```
 
   * app_to_neb_net stands for app to nebulon network information
   * network_type : 0 stands for no security, 1 stands for WPA security,
@@ -107,7 +107,7 @@
 	    // wednesday, thursday ... 
 	}
     ]
-```}
+}```
 
   * schedule_type inficates the fragrance to emit.
     0: fragrance 1
