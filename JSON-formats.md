@@ -26,11 +26,12 @@
     "message_size" : ###(int),
     "message_type" : "neb_to_server_ipu",
     "nebulon_id" : ##(int),
-    "nebulon_liquid_level" : ###(int)
+    "nebulon_ip_address" : "##.##.##.##"
 }
 ```
 
   * neb_to_server_ipu stands for nebulon to server ip address update
+  * "##.##.##.##" is the nebulon's private ip address
 
 ## From Mobile App
 
@@ -125,3 +126,45 @@
     0: fragrance 1
     1: fragrance 2
     2: both of them
+
+--------------------------------------------------------------
+
+# MOBILE APP
+
+## From Remote server
+
+1. Ip addresses that were requested before
+```
+{
+    "message_size" : ###(int),
+    "message_type" : "serv_to_app_ips",
+    "nebulons_ips" : [
+	{
+	    "neb_id" : ##(int),
+	    "neb_ip" : "##.##.##.##"
+	},
+	{
+	    "neb_id" : ##(int),
+	    "neb_ip" : "##.##.##.##"
+	},
+	{
+	    // more ip addresses if needed
+	}
+    ]
+}
+```
+
+  * serv_to_app_ips stands for server to app ip addresses
+  * ##.##.##.## indicates the nebulon's private IP(v4 or v6)
+  
+## From Nebulon
+
+```
+{
+    "message_size" : ###(int),
+    "message_type" : "neb_to_app_idp",
+    "nebulon_id" : ##(int)
+}
+```
+
+  * neb_to_app_idp stands for nebulon to app id response
