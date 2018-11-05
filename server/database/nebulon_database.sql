@@ -55,6 +55,7 @@ CREATE TABLE IF NOT EXISTS nebulon(
   nebulon_id int NOT NULL,
   nebulon_state varchar(45) NOT NULL,
   nebulon_liquid_level int NOT NULL,
+  nebulon_private_ip varchar(40),	
   nebulon_purchase_date timestamp,
   spec_id int NOT NULL,
   loan_id int NOT NULL,

@@ -13,6 +13,12 @@ void signal_handling();
 /* Signal handler function */
 void signal_handler(int signal);
 
+/* Funtion to receive a message in client_socket_fd */
+void receive_message(int client_socket_fd, char* message, char* client_ip_address);
+
+/* Function that initializes the mysql controller object */
+void open_connection_to_database(MySQLConnection *mysql, char* file);
+
 int
 main(int argc, char* argv[]){
 
@@ -62,7 +68,8 @@ main(int argc, char* argv[]){
 
     
     // Receiving connection from client
-    
+
+    // sockaddr_storage can hold both IPv4 or IPv6 addresses
     struct sockaddr_storage client_addr;
     int client_socket_fd;
     int addr_size = sizeof(client_addr);
@@ -97,79 +104,61 @@ main(int argc, char* argv[]){
       // recv(): Receiving message from client ------
 
       char message[MAX_MESSAGE_SIZE];
-      int bytes_read;
+      receive_message(client_socket_fd, message, address);
 
-      // MAX_MESSAGE_SIZE - 1: avoids writing to the null byte character
-      if( (bytes_read = recv(client_socket_fd, message, MAX_MESSAGE_SIZE - 1, 0)) == -1 ){
-	  
-	perror("recv()");
-	exit(0);
-	  
-      }else if( bytes_read == 0 ) // no message and peer closed the connection
-	exit(0);
-      
-      // Obtain message size
-      int message_size;
-      get_number_in_header(message, &message_size);
-      
-      // Read missing part of the message
-      while( bytes_read != message_size )
-	
-	bytes_read += recv(client_socket_fd, message + bytes_read, (MAX_MESSAGE_SIZE - 1) - bytes_read, 0);
-
-      message[bytes_read] = '\0'; // null byte to mark the end of the message
-	
-      // Message completely received
-      printf("CHILD: Message from %s completely received\n", address);
-      //printf("CHILD: The message is:\n%s\n", message);
+      // END recv() --------------------------------
 
       try{
 
 	// Analyze data received and store it in MySQL or send it to a nebulizer
 	Document json;
 
-	json.Parse(message);
+	if( json.Parse(message).HasParseError() )
+	  fprintf(stderr, "The message received has not the proper JSON format:\n%s\n", message);
+	else{
 
-	if( json.IsObject() && json.HasMember("type") ){
+	  // If the root is an object
+	  if( json.IsObject() && json.HasMember("message_type") ){
 	
-	  const char* type = json["type"].GetString();
+	    const char* message_type = json["message_type"].GetString();
 
-	  // Message received from nebulizer
-	  if( strcmp(type, "neb_to_server") == 0 ){
+	    // Message received from nebulon or mobile app
+	    if( (strcmp(message_type, "neb_to_server_llu") == 0)
+		|| (strcmp(message_type, "neb_to_server_ipu") == 0)
+		|| (strcmp(message_type, "app_to_server_ipr") == 0) ){
 
-	    std::ifstream db_info(argv[1], std::ifstream::in);
+	      // database controller object
+	      MySQLConnection *mysql;
 
-	    if( db_info.is_open() ){
+	      // initializes the controller
+	      open_connection_to_database(mysql, argv[1]);	      
 
-	      std::string host, user, pass, database;
-	      unsigned int port;
+	      if( strcmp(message_type, "neb_to_server_llu") == 0 ){
+		
+		// Make update_query
+		mysql -> update_query( "nebulon", "nebulon_liquid_level",
+				       std::to_string(json["nebulon_liquid_level"].GetInt()).c_str(), "nebulon_id",
+				       std::to_string(json["nebulon_id"].GetInt()).c_str() );
+		  
+	      }
+	      
+	      else if( strcmp(message_type, "neb_to_server_ipu") == 0 )
+		;
+		
+	      else if( strcmp(message_type, "app_to_server_ipr") == 0 )
+		;
 
-	      db_info >> user;
-	      db_info >> pass;
-	      db_info >> host;
-	      db_info >> database;
-	      db_info >> port;
-
-	      // Create connection
-	      MySQLConnection mysql(host.c_str(), user.c_str(),
-				    pass.c_str(), database.c_str(), port);
-
-	      // Make update_query
-	      mysql.update_query( "nebulon", "nebulon_liquid_level",
-				  std::to_string(json["liquid_level"].GetInt()).c_str(), "nebulon_id",
-				  std::to_string(json["id"].GetInt()).c_str() );
-	    
-	    }else // could not open db info file
-	      fprintf(stderr, "Unable to open database information file\n");
+	      // deleting dynamic allocation for mysql
+	      delete mysql;
 	  
-	  }else if(type == "app_to_server"){
-	  
-	  }else{
-	    fprintf(stderr, "Message with unrecognized type\n");
-	  }
+	    }else
+	      // 'message' does not have a valid message_type
+	      fprintf(stderr, "CHILD: Message with unrecognized type: %s\n", message_type);
 	
-	}else{
-	  fprintf(stderr, "Unrecognized message");
+	  }else
+	    // 'message' is not and object or it has not he member 'message_type'
+	    fprintf(stderr, "CHILD: I cannot understand the message:\n%s\n", message);
+	  
 	}
       
       }catch(std::exception &e){
@@ -179,8 +168,6 @@ main(int argc, char* argv[]){
       close(client_socket_fd);
       printf("CHILD: Connection from %s closed!\n", address);
       exit(0);
-
-      // END recv() --------------------------------
 	
     }
     // parent
@@ -296,6 +283,69 @@ signal_handler(int signal){
 
   errno = errno_temp;
 
+}
+
+void
+receive_message(int client_socket_fd, char* message, char* client_ip_address){
+  int bytes_read;
+
+  // MAX_MESSAGE_SIZE - 1: avoids writing to the null byte character
+  if( (bytes_read = recv(client_socket_fd, message, MAX_MESSAGE_SIZE - 1, 0)) == -1 ){
+	  
+    perror("recv()");
+    close(client_socket_fd);
+    printf("CHILD: Connection from %s closed!\n", client_ip_address);
+    exit(0);
+	  
+  }else if( bytes_read == 0 ){
+    // no message and peer closed the connection
+    close(client_socket_fd);
+    printf("CHILD: Connection from %s closed!\n", client_ip_address);
+    exit(0);
+  }
+      
+  // Obtain message size
+  int message_size;
+  get_number_in_header(message, &message_size);
+      
+  // Read missing part of the message
+  while( bytes_read != message_size )
+	
+    bytes_read += recv(client_socket_fd, message + bytes_read, (MAX_MESSAGE_SIZE - 1) - bytes_read, 0);
+
+  message[bytes_read] = '\0'; // null byte to mark the end of the message
+	
+  // Message completely received
+  printf("CHILD: Message from %s completely received\n", client_ip_address);
+  
+}
+
+void
+open_connection_to_database(MySQLConnection *mysql, char* file){
+  
+  // open database info file
+  std::ifstream db_info(file, std::ifstream::in);
+	    
+  if( db_info.is_open() ){
+
+    std::string host, user, pass, database;
+    unsigned int port;
+
+    // read from file
+    db_info >> user;
+    db_info >> pass;
+    db_info >> host;
+    db_info >> database;
+    db_info >> port;
+
+    db_info.close(); // close database info file
+
+    // Create connection
+    mysql = new MySQLConnection(host.c_str(), user.c_str(), pass.c_str(), database.c_str(), port);
+    
+  }else
+    // could not open db info file
+    fprintf(stderr, "CHILD: Unable to open database information file: %s\n", file);
 }
 
 /* ---------- END MAIN FUNCTIONS ---------- */
