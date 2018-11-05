@@ -17,7 +17,11 @@ void signal_handler(int signal);
 void receive_message(int client_socket_fd, char* message, char* client_ip_address);
 
 /* Function that initializes the mysql controller object */
-void open_connection_to_database(MySQLConnection *mysql, char* file);
+void open_connection_to_database(MySQLConnection *&mysql, char* file);
+
+/* Function that constructs a json response to a previous request 
+   (ip addresses request by app) and stores the result in 'json_response' */
+void build_response(Document &json, MySQLConnection *mysql, std::string &json_response);
 
 int
 main(int argc, char* argv[]){
@@ -65,7 +69,6 @@ main(int argc, char* argv[]){
   while(1){
 
     printf("Waiting for connections...\n");
-
     
     // Receiving connection from client
 
@@ -131,30 +134,47 @@ main(int argc, char* argv[]){
 	      MySQLConnection *mysql;
 
 	      // initializes the controller
-	      open_connection_to_database(mysql, argv[1]);	      
+	      open_connection_to_database(mysql, argv[1]);
 
-	      if( strcmp(message_type, "neb_to_server_llu") == 0 ){
+	      if( strcmp(message_type, "neb_to_server_llu") == 0 )
 		
 		// Make update_query
 		mysql -> update_query( "nebulon", "nebulon_liquid_level",
 				       std::to_string(json["nebulon_liquid_level"].GetInt()).c_str(), "nebulon_id",
 				       std::to_string(json["nebulon_id"].GetInt()).c_str() );
 		  
-	      }
 	      
 	      else if( strcmp(message_type, "neb_to_server_ipu") == 0 )
-		;
+		// Make update_query
+		mysql -> update_query( "nebulon", "nebulon_private_ip",
+				       json["nebulon_ip_address"].GetString(), "nebulon_id",
+				       std::to_string(json["nebulon_id"].GetInt()).c_str() );
 		
-	      else if( strcmp(message_type, "app_to_server_ipr") == 0 )
-		;
+	      else if( strcmp(message_type, "app_to_server_ipr") == 0 ){
+
+		// making JSON response --------------------
+		
+		std::string json_response;
+
+		build_response(json, mysql, json_response);
+
+		// END making JSON response --------------------
+
+		// send() -----------------------------
+
+		if( send(client_socket_fd, json_response.c_str(), json_response.size(), 0) == -1 )
+		  perror("send()");
+
+		// END send() ---------------------------
+	      }
 
 	      // deleting dynamic allocation for mysql
 	      delete mysql;
-	  
+	      
 	    }else
 	      // 'message' does not have a valid message_type
 	      fprintf(stderr, "CHILD: Message with unrecognized type: %s\n", message_type);
-	
+
 	  }else
 	    // 'message' is not and object or it has not he member 'message_type'
 	    fprintf(stderr, "CHILD: I cannot understand the message:\n%s\n", message);
@@ -321,7 +341,7 @@ receive_message(int client_socket_fd, char* message, char* client_ip_address){
 }
 
 void
-open_connection_to_database(MySQLConnection *mysql, char* file){
+open_connection_to_database(MySQLConnection *&mysql, char* file){
   
   // open database info file
   std::ifstream db_info(file, std::ifstream::in);
@@ -346,6 +366,45 @@ open_connection_to_database(MySQLConnection *mysql, char* file){
   }else
     // could not open db info file
     fprintf(stderr, "CHILD: Unable to open database information file: %s\n", file);
+}
+
+void
+build_response(Document &json, MySQLConnection *mysql, std::string &json_response){
+  
+  json_response = "\t\"message_type\" : \"serv_to_app_ips\",\n\t\"nebulons_ips\" : [\n";
+
+  const Value& nebulons_ids = json["nebulons_ids"];
+  for( SizeType it = 0; it < nebulons_ids.Size(); ++it ){
+
+    char* neb_privateip;
+    const char* neb_id = std::to_string(nebulons_ids[it].GetInt()).c_str();
+    // Makes a select query, and stores the result in neb_privateip
+    mysql -> select_query( "nebulon_private_ip", "nebulon",
+			   "nebulon_id", neb_id,
+			   neb_privateip);
+
+    json_response.append("\t\t{\n\t\t\t\"neb_id\" : ");
+    json_response.append(neb_id);
+    json_response.append(",\n\t\t\t\"neb_ip\" : \"");
+    json_response.append(neb_privateip);
+    json_response.append("\"\n\t\t}");
+
+    if( (it + 1) < nebulons_ids.Size() )
+      json_response.append(",\n");
+    else
+      json_response.append("\n");
+  }
+
+  json_response.append("\t]\n}");
+  std::string json_aux = "{\n\t\"message_size\" : ";
+
+  int message_size = json_response.size() + json_aux.size();
+  // +2: the comma and the \n
+  message_size += ( std::to_string(message_size).size() + 2 );
+  json_aux.append( (std::to_string(message_size) += ",\n") );
+  json_aux.append( json_response );
+  json_response = json_aux;
+  
 }
 
 /* ---------- END MAIN FUNCTIONS ---------- */
