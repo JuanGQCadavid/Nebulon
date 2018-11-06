@@ -17,7 +17,7 @@
   - WPA-PSK: ``` ./add_network_bin 1 SSID PASS ```
   - WPA-EAP: ``` ./add_network_bin 2 SSID USER PASS ```
 
-5. Arguments for the script connectin.sh
+5. Arguments for the script connect_to.sh
 
   - ``` ./connect_to.sh 0 SSID ```
   - ``` ./connect_to.sh 1 SSID PASS ```
