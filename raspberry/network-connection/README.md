@@ -2,7 +2,7 @@
 
 1. Units wpa_supplicant@wlan0.service, dhcpcd.service, ssh.service enabled
      
-2. Package 'sleep', 'openssl' installed
+2. Package 'openssl' installed
 
 3. Create ca_cert in the following path /etc/cert/ca.pem. NOTE: Give 755 permissions to the directory
    ``` $ openssl genrsa -des3 -out ca.key 2048 ``` 
@@ -19,12 +19,9 @@
 
 5. Arguments for the script connectin.sh
 
-  - ``` ./connectin.sh seconds 0 SSID ```
-  - ``` ./connectin.sh seconds 1 SSID PASS ```
-  - ``` ./connectin.sh seconds 2 SSID USER PASS ```
-
-  - This script helps the mobile app to close the ssh connection before the
-    system daemons are restarted
+  - ``` ./connect_to.sh 0 SSID ```
+  - ``` ./connect_to.sh 1 SSID PASS ```
+  - ``` ./connect_to.sh 2 SSID USER PASS ```
   
 ----------------------------
 
@@ -47,9 +44,7 @@
    
    - The make compiles and gives the user ID necessary permissions to the binary
 
-5. Run the script connectin.sh
-
-6. Exit ssh connection (this from the app)
+5. Run the script connect_in.sh
 
 ---------------------------
 
