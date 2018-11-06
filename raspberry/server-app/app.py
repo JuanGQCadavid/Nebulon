@@ -6,11 +6,15 @@ from _thread import *
 
 MAX_QUEUE = 5
 def getID():
-    id_n = os.getenvb("NEB_ID")
-    print(id_n)
+    enviroment_id = str.encode('NEB_ID')
+    id_n = os.getenvb(enviroment_id)
+    
+    return id_n.decode('utf-8')
     
 def threaded_client(conn):
-    conn.send(str.encode('Welcome, Type your info \n'))
+    id_neb = getID()
+    
+    conn.send(str.encode("ID ->" + str(id_neb)))
 
     while True:
         data = conn.recv(2048)
@@ -20,6 +24,7 @@ def threaded_client(conn):
             break
 
         conn.sendall(str.encode(reply))
+
     conn.close()
 
 def main():
