@@ -1,0 +1,8 @@
+# Shell
+SHELL=/bin/sh
+
+# Time zone
+CRON_TZ=America/Bogota
+
+# * * * * * command
+

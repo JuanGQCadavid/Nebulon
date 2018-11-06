@@ -17,6 +17,22 @@
 6. Connect it to the internet and run ``` $ sudo apt-get update ``` and ``` $ sudo apt-get upgrade ```
 7. It should work perfectly right now.
 
---------------------------------
+-------------------------------------------
 
-## Important! -> Download the repository: https://github.com/JuanGQCadavid/Nebulon.git
+## Important!
+
+* Set time zone to properly use cron
+  ``` $ sudo ln -sf /usr/share/America/Bogota /etc/localtime ```
+* Run the command to update to the lastest firmware
+  ``` $ sudo rpi-update ```
+* Download the repository: https://github.com/JuanGQCadavid/Nebulon.git
+
+--------------------------------------------
+
+## Errors Registered
+
+* Under voltage due to bad power supply.
+* Internal error: Oops: 17 [#1] SMP ARM.
+
+  - This error seems to be due to high WiFi traffic.
+  - Try to use a wried connection to make updates and stuff.
