@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center">
+
+        <ImageView
+
+
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/back"
+            android:onClick="back"/>
+
+        <TextView
+
+            android:layout_margin="30sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="20sp"
+            android:textAlignment="center"
+            android:text="Rutinas"/>
+
+
+        <ImageView
+
+
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/next"
+            android:onClick="next"
+            />
+
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="15sp"
+        android:orientation="vertical"
+        android:gravity="center">
+
+        <Spinner
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+        </Spinner>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Descripcion"
+            android:layout_gravity="left"
+            android:textSize="20sp"/>
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="200sp"
+            >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin euismod non tortor eu accumsan. Quisque at luctus nisl. Vestibulum et est mi. Ut et massa vitae sapien condimentum pulvinar. Mauris efficitur sagittis posuere. Suspendisse potenti. Vestibulum feugiat sollicitudin mattis. Nulla lorem magna, gravida nec congue in, rutrum quis mi. Integer eu dui sed dui iaculis malesuada a eu urna.
+
+Sed convallis ultricies ligula vitae imperdiet. Morbi at erat quam. Mauris lobortis sollicitudin ex vel dapibus. Sed vitae massa at purus gravida eleifend quis eu nunc. Cras mattis tortor id lectus aliquam efficitur. Aliquam erat volutpat. Morbi eu risus placerat, pharetra erat vel, dictum orci. Morbi volutpat dui nisl, sed dictum nisi mollis vel. Quisque ac risus non tellus consectetur consequat venenatis ut est. Cras vehicula molestie risus mattis semper. Praesent tristique ac mauris viverra rutrum.
+
+Pellentesque malesuada ipsum neque, eget volutpat magna efficitur pulvinar. Proin ut maximus turpis, a semper urna. Duis dolor dolor, interdum in orci sed, blandit faucibus dui. Donec eget nunc scelerisque purus tempor posuere. Suspendisse nisl ex, porta id magna id, molestie faucibus eros. Nam ultricies hendrerit ex sit amet finibus. Aenean et malesuada libero, eget aliquam nunc. Vivamus eu diam ac sapien egestas auctor vitae non augue. Mauris sed aliquam sem. Suspendisse quis erat et ante varius fermentum. In hac habitasse platea dictumst. Cras eu sapien eget nisi tristique elementum a ac mi. In laoreet maximus massa, in tincidunt urna rhoncus at. Proin non metus non erat imperdiet iaculis. Integer porta lectus at porttitor porta. Donec rutrum convallis quam, id vehicula eros ultrices ac.
+
+Fusce non consectetur dolor, non tincidunt nulla. Duis massa nibh, accumsan sed lectus vitae, dapibus tincidunt nunc. Aliquam a lacinia quam. Fusce in mattis tortor. Praesent nec posuere metus, ornare blandit ipsum. Interdum et malesuada fames ac ante ipsum primis in faucibus. Mauris tempor lectus nunc, vitae varius turpis rutrum tristique. Fusce enim ligula, placerat ac ante tempor, viverra sagittis tortor. Sed venenatis ligula ac laoreet cursus. Nulla at tincidunt erat. Suspendisse potenti. Donec suscipit quis mauris eu aliquet. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin dictum sem a velit congue, ullamcorper ullamcorper turpis maximus. Mauris hendrerit, leo eget mattis aliquam, est felis mollis orci, in aliquam tellus leo ac sapien.
+
+Proin vestibulum urna quis bibendum posuere. Maecenas varius varius est, non suscipit tellus rhoncus in. Cras pharetra lectus eget dolor tempus aliquet. Cras dapibus erat sed justo porttitor, nec rutrum enim suscipit. Aenean erat est, volutpat non blandit a, blandit vulputate ex. Suspendisse fringilla velit vel erat gravida accumsan. Nulla tempus eleifend dictum. Fusce lorem elit, feugiat in malesuada eu, tempus id turpis. Morbi ullamcorper vitae elit sit amet pulvinar. Aenean tempor neque non euismod faucibus. Pellentesque interdum est vel ultricies porttitor."/>
+
+        </ScrollView>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Crear Rutina"/>
+
+    </LinearLayout>
+
+
+
+</LinearLayout>

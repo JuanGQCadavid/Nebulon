@@ -20,32 +20,34 @@ main(char *argv[]){
   // Array of objects with the configuration for each day
   const Value& days = json["schedule"];
 
-  days
-  if( )
+  const Value& s = ;
+
 
   for(SizeType i = 0; i < days.Size(); ++i){
 
-    // s: represents each configuration that a day might have
-    Value::ConstMemberIterator s = days[i][].MemberBegin()["monday"];
+    // 
+    const Value& day = days[i].MemberBegin();
     
+    std::string day_name = day -> name.GetString();
+
+    // s: represents an array with each configuration that a day might have
+    const Value& config = s -> value;
     
-    string day = s -> name.GetString();
-    if( day == "monday" ){
+    if( day_name == "monday" ){
       
-      const Value& config = s -> GetValue();
+      // iterate over s and make things xD
       
+    }else if( day_name == "tuesday" ){
       
-    }else if( day == "tuesday" ){
+    }else if( day_name == "wednesday" ){
       
-    }else if( day == "wednesday" ){
+    }else if( day_name == "thursday" ){
       
-    }else if( day == "thursday" ){
+    }else if( day_name == "friday" ){
       
-    }else if( day == "friday" ){
+    }else if( day_name == "saturday" ){
       
-    }else if( day == "saturday" ){
-      
-    }else if( day == "sunday" ){
+    }else if( day_name == "sunday" ){
       
     }
     

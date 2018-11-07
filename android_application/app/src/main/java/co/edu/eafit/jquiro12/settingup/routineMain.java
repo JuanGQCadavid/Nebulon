@@ -4,14 +4,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 
-public class Rutines extends AppCompatActivity {
+public class routineMain extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_rutines);
+        setContentView(R.layout.activity_routine_main_2);
     }
-
     public void Next(View view) {
     }
 
