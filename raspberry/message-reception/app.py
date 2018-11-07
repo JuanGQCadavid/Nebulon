@@ -13,39 +13,48 @@ def getID():
     return id_n.decode('utf-8')
 
 def threaded_getID(conn):
+    print("Threaded ID")
+
     id_neb = getID()
-    conn.send(str.encode("ID ->" + str(id_neb)))
-    while True:
-        data = conn.recv(2048)
-        reply = 'Server output: ' + data.decode('utf-8')
-
-        if not data:
-            break
-
-        conn.sendall(str.encode(reply))
-
+    
+    conn.send(str.encode(str(id_neb)))
+    
     conn.close()
     
 def threaded_client(conn):
     while True:
         data = conn.recv(2048)
         data_decode = data.decode('utf-8')
-        reply = 'Server output: ' + data.decode('utf-8')
 
         if not data:
             break
 
-        
-
         print(type(data_decode))
-
+      
         data_object = json.loads(data_decode)
-        print(data_object["message_type"])
+        message_type = data_object["message_type"]
+
+        print(message_type)
+
+        if(message_type == "id_request"):
+                threaded_getID(conn)
+                break;
         
-        conn.sendall(str.encode(reply))
+        elif(message_type == "i_dont_know"):
+                #Others
+                break;
+        else:
+            reply = "404"
 
-    conn.close()
+            print(reply)
+            conn.sendall(str.encode(reply))
+            conn.close()
+            break;
+        
+        break;
+        
 
+        
 def main():
     #Conecction Type,TCP Connection
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
