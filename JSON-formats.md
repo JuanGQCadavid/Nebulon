@@ -74,7 +74,7 @@
 
 2. Mobile App sends a schedule to be interpreted
 
-```
+``
 {
     "message_size" : ##(int),
     "message_type" : "app_to_neb_sch",
@@ -88,16 +88,16 @@
 			"working_time" : "02:00:00",
 			"sleeping_time" : "00:05:00",
 			"schedule_type" : ##(0 or 1 or 2)
-		    },
-		    {
-			"s2" : {
-			    "start": "19:00:00",
-			    "end" : "22:00:00",
-			    "working_time" : "03:00:00",
-			    "sleeping_time" : "00:00:00",
-			    "schedule_type" : 2
-			}
 		    }
+		},
+		{
+		    "s2" : {
+			"start": "19:00:00",
+			"end" : "22:00:00",
+			"working_time" : "03:00:00",
+			"sleeping_time" : "00:00:00",
+			"schedule_type" : 2
+	            }
 		}
 	    ]
 	},

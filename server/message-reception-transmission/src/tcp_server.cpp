@@ -117,7 +117,7 @@ main(int argc, char* argv[]){
 	Document json;
 
 	if( json.Parse(message).HasParseError() )
-	  fprintf(stderr, "The message received has not the proper JSON format:\n%s\n", message);
+	  fprintf(stderr, "The message received doesn't have the proper JSON format:\n%s\n", message);
 	else{
 
 	  // If the root is an object
