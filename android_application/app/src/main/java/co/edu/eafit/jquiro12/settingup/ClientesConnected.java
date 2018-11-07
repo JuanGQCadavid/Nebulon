@@ -36,16 +36,18 @@ public class ClientesConnected extends AsyncTask<Datos_List_Nebulizer, Integer, 
             publishProgress((int) (count/dataSize * 100));
 
         }
-
+        return null;
     }
 
     @Override
     protected void onPostExecute(String s) {
+
         super.onPostExecute(s);
     }
 
     @Override
     protected void onProgressUpdate(Integer... values) {
+
         super.onProgressUpdate(values);
     }
 }
