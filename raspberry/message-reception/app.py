@@ -2,6 +2,7 @@ import socket
 import sys
 import os
 from _thread import *
+import json
 # Hostname -I
 
 MAX_QUEUE = 5
@@ -10,12 +11,10 @@ def getID():
     id_n = os.getenvb(enviroment_id)
     
     return id_n.decode('utf-8')
-    
-def threaded_client(conn):
-    id_neb = getID()
-    
-    conn.send(str.encode("ID ->" + str(id_neb)))
 
+def threaded_getID(conn):
+    id_neb = getID()
+    conn.send(str.encode("ID ->" + str(id_neb)))
     while True:
         data = conn.recv(2048)
         reply = 'Server output: ' + data.decode('utf-8')
@@ -23,6 +22,26 @@ def threaded_client(conn):
         if not data:
             break
 
+        conn.sendall(str.encode(reply))
+
+    conn.close()
+    
+def threaded_client(conn):
+    while True:
+        data = conn.recv(2048)
+        data_decode = data.decode('utf-8')
+        reply = 'Server output: ' + data.decode('utf-8')
+
+        if not data:
+            break
+
+        
+
+        print(type(data_decode))
+
+        data_object = json.loads(data_decode)
+        print(data_object["message_type"])
+        
         conn.sendall(str.encode(reply))
 
     conn.close()
