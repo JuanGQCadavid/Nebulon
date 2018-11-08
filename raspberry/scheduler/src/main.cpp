@@ -1,11 +1,25 @@
-#include "../include/rapidjson"
 #include <iostream>
 #include <fstream>
+#include "../include/rapidjson/document.h"
 
+/* Needed for Rapidjson */
+using namespace rapidjson;
+
+/* Writes a job into a cron file with the correct format. See crontab(5) */
+void create_job(std::ofstream& cron, const char* day, const char* start, const char*end,
+		const char* working_time, const char* sleeping_time, int schedule_type);
+
+/* Reads from a JSON document and returns a pointer to a char* with the text */
 char* read_file(char* file_route);
 
 int
-main(char *argv[]){
+main(int argc, char *argv[]){
+
+  if(argc != 3){
+    std::cerr << "Usage: " << argv[0] << " <read-from-file> " << " <write-into-file>"
+	      << std::endl;
+    return 1;
+  }
 
   // JSON handler
   Document json;
@@ -14,44 +28,66 @@ main(char *argv[]){
 
   schedule = read_file(argv[1]);
 
-  // Parse the schedule, its syntax has been already checked
-  json.Parse(schedule);
+  // CRON file
+  std::ofstream cron(argv[2]);
 
-  // Array of objects with the configuration for each day
-  const Value& days = json["schedule"];
-
-  const Value& s = ;
-
-
-  for(SizeType i = 0; i < days.Size(); ++i){
-
-    // 
-    const Value& day = days[i].MemberBegin();
-    
-    std::string day_name = day -> name.GetString();
-
-    // s: represents an array with each configuration that a day might have
-    const Value& config = s -> value;
-    
-    if( day_name == "monday" ){
-      
-      // iterate over s and make things xD
-      
-    }else if( day_name == "tuesday" ){
-      
-    }else if( day_name == "wednesday" ){
-      
-    }else if( day_name == "thursday" ){
-      
-    }else if( day_name == "friday" ){
-      
-    }else if( day_name == "saturday" ){
-      
-    }else if( day_name == "sunday" ){
-      
-    }
-    
+  if( !cron.is_open() ){
+    std::cerr << "Error opening file: " << argv[2] << std::endl;
+    return 1;
   }
+
+  // Cron needed header
+  cron << "SHELL=/bin/sh\n";
+  cron << "CRON_TZ=America/Bogota\n";
+
+  try{
+
+    // Parse the schedule, though its syntax has been already checked
+    json.Parse(schedule);
+    
+    // Days of the week
+    const char* days[] = {"monday", "tuesday", "wednesday", "thursday", "friday",
+		    "saturday", "sunday"};
+
+    // config: Array of objects with the configuration for each day
+    const Value& config = json["schedule"];
+    for(SizeType i = 0; i < config.Size(); ++i){
+      
+      for(int j = 0; j < 7; ++j){ //for each day
+	if( config[i].HasMember(days[j]) ){
+
+	  // s: Array with the configurations that a day can have
+	  const Value& s = config[i][days[j]];
+	  for(SizeType k = 0; k < s.Size(); ++k){ // for each config in day days[k]
+
+	    create_job(cron, days[j], s[k]["start"].GetString(),
+		       s[k]["end"].GetString(), s[k]["working_time"].GetString(),
+		       s[k]["sleeping_time"].GetString(), s[k]["schedule_type"].GetInt());
+	    
+	  }
+
+	  break; // each config has only one day
+	}
+      } 
+    }
+
+    // Close cron file
+    cron.close();
+  
+  }catch(std::exception& e){
+    std::cerr << "An exception ocurred: " << e.what() << std::endl;
+  }
+}
+
+void
+create_job(std::ofstream& cron, const char* day, const char* start, const char*end,
+	   const char* working_time, const char* sleeping_time, int schedule_type){
+
+
+  // use this guide: https://www.fluentcpp.com/2017/04/21/how-to-split-a-string-in-c/
+  
+  // cron << ;
+  
 }
 
 char*
@@ -60,7 +96,7 @@ read_file(char* file_route){
   // Stream that will read from the file with the schedule
   std::ifstream file(file_route);
   
-  if( file.is_iopen() ){
+  if( file.is_open() ){
     
     // Put the stream at the end of the file
     file.seekg(0, file.end);
@@ -70,9 +106,9 @@ read_file(char* file_route){
     file.seekg(0, file.beg);
 
     // Buffer with that will hold the file's content
-    char *buffer = new char[length];
+    char *buffer = new char[file_size];
     // Read the entire file into buffer
-    file.read(buffer, length);
+    file.read(buffer, file_size);
 
     // Error checking
     if( file )

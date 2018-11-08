@@ -1,0 +1,29 @@
+{
+    "message_size" : 480,
+    "message_type" : "app_to_neb_sch",
+    "schedule" : [
+	{
+	    "monday" : [
+		{
+		    "start" : "10:00",
+		    "end" : "18:00",
+		    "working_time" : "02:00",
+		    "sleeping_time" : "00:05",
+		    "schedule_type" : 2
+		    
+		},
+		{
+		    "start": "19:00",
+		    "end" : "22:00",
+		    "working_time" : "03:00",
+		    "sleeping_time" : "00:00",
+		    "schedule_type" : 2
+	            
+		}
+	    ]
+	},
+	{
+	    "tuesday" : // ....
+	}
+    ]
+}

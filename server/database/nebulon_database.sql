@@ -55,10 +55,11 @@ CREATE TABLE IF NOT EXISTS nebulon(
   nebulon_id int NOT NULL,
   nebulon_state varchar(45) NOT NULL,
   nebulon_liquid_level int NOT NULL,
+  nebulon_schedule blob,
   nebulon_private_ip varchar(40),	
-  nebulon_purchase_date timestamp,
+  nebulon_purchase_date timestamp NOT NULL,
   spec_id int NOT NULL,
-  loan_id int NOT NULL,
+  loan_id int,
   PRIMARY KEY(nebulon_id),
   CONSTRAINT fk_nebulon_spec_id FOREIGN KEY(spec_id) REFERENCES nebulon_spec(spec_id),
   CONSTRAINT fk_nebulon_loan_id FOREIGN KEY(loan_id) REFERENCES loan(loan_id)
