@@ -55,12 +55,26 @@
             android:orientation="vertical"
             android:layout_margin="15sp">
 
-            <TextView
+            <LinearLayout
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="18sp"
-                android:textColor="#000000"
-                android:text="Credenciales de red:"/>
+                android:layout_height="wrap_content">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="18sp"
+                    android:textColor="#000000"
+                    android:text="Credenciales de red:"/>
+
+                <Spinner
+                    android:id="@+id/spinner_1"
+                    android:layout_marginLeft="10sp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:entries="@array/network_options"
+                    />
+
+            </LinearLayout>
+
 
             <LinearLayout
                 android:layout_marginTop="15sp"
@@ -68,23 +82,35 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:layout_marginLeft="15sp"
-                android:layout_marginRight="15sp">
+                android:layout_marginRight="15sp"
+                android:id="@+id/layout_1"
+                android:visibility="visible">
 
                 <EditText
-
+                    android:id="@+id/ssid"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="SSID"
                     android:inputType="textPersonName"
+                    android:visibility="gone"
                     />
 
                 <EditText
+                    android:id="@+id/userName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="User Name"
+                    android:inputType="text"
+                    android:visibility="gone"
+                    />
 
+                <EditText
+                    android:id="@+id/password"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="Password"
                     android:inputType="text"
-
+                    android:visibility="gone"
                     />
             </LinearLayout>
 

@@ -61,8 +61,8 @@ public class Adapter_Configure extends BaseAdapter {
         TextView text_title_mac = (TextView) vista.findViewById(R.id.text_mac);
 
 
-        text_title_id.setText(dataList.get(position).getId_title().toString());
-        text_title_mac.setText(dataList.get(position).getMac_title().toString());
+        text_title_id.setText(dataList.get(position).getId()+ "");
+        text_title_mac.setText(dataList.get(position).getIp() + "");
 
         return vista;
 

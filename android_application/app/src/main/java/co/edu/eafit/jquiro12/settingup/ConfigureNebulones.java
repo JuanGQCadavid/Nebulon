@@ -4,8 +4,12 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Spinner;
+import android.widget.TextView;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 public class ConfigureNebulones extends AppCompatActivity {
@@ -14,6 +18,8 @@ public class ConfigureNebulones extends AppCompatActivity {
 
     ListView listView;
     ArrayList<Datos_List_Nebulizer> nebulonList;
+
+    Spinner spinner1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,14 +37,50 @@ public class ConfigureNebulones extends AppCompatActivity {
 
         //Connect the Adapter to the list.
         listView.setAdapter(adaptor);
+
+        spinner1 = (Spinner) findViewById(R.id.spinner_1);
+        spinner1.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int pos, long id)
+            {
+                Spinner spinner = (Spinner) view.findViewById(R.id.spinner_1);
+                TextView txt_ssid = (TextView) view.findViewById(R.id.ssid);
+                TextView txt_pw = (TextView) view.findViewById(R.id.password);
+                TextView txt_un = (TextView) view.findViewById(R.id.userName);
+
+                String response = String.valueOf(spinner.getSelectedItem());
+
+                if(response.equals("0")){
+                    txt_ssid.setVisibility(View.VISIBLE);
+                    txt_pw.setVisibility(View.GONE);
+                    txt_un.setVisibility(View.GONE);
+
+                }else if(response.equals("1")){
+                    txt_ssid.setVisibility(View.VISIBLE);
+                    txt_pw.setVisibility(View.VISIBLE);
+                    txt_un.setVisibility(View.GONE);
+
+
+                }else{
+                    txt_ssid.setVisibility(View.VISIBLE);
+                    txt_pw.setVisibility(View.VISIBLE);
+                    txt_un.setVisibility(View.VISIBLE);
+
+                }
+
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> parent)
+            {    }
+        });
     }
 
     public ArrayList<Datos_List_Nebulizer>  getNebulonesFound(){
-        ArrayList<Datos_List_Nebulizer> list = (ArrayList<Datos_List_Nebulizer>) getIntent().getExtras().getSerializable("sup");
+        ArrayList<Datos_List_Nebulizer> list = (ArrayList<Datos_List_Nebulizer>) getIntent().getExtras().getSerializable("Neb_found-Config_neb");
 
         System.out.println("PENDIENTE");
         for (Datos_List_Nebulizer datoActual: list){
-            System.out.println(datoActual.getId_title());
+            System.out.println(datoActual.getIp());
 
         }
 
@@ -49,7 +91,21 @@ public class ConfigureNebulones extends AppCompatActivity {
     }
 
     public void Next(View view) {
-        Intent intent = new Intent(this, routineMain.class);
+        //send Wifi
+
+
+        String[] WiFiData = getWiFiData();
+
+        Intent intent = new Intent(this, LoadingNebulizer.class);
+        intent.putExtra("Config_neb-Load_neb",(Serializable)nebulonList);
         startActivity(intent);
     }
+
+    public String[] getWiFiData(){
+        String [] data = new String[4];
+
+
+        return data;
+    }
+
 }

@@ -13,9 +13,12 @@ import android.widget.Toast;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class Welcome extends AppCompatActivity {
-    public static final String EXTRA_MESSAGE = "co.edu.eafit.jquiro12.settingup.MESSAGE";
+import java.io.Serializable;
 
+public class Welcome extends AppCompatActivity {
+
+    public static final String EXTRA_MESSAGE = "co.edu.eafit.jquiro12.settingup.MESSAGE";
+    private final int STANDAR_PORT = 5555;
 
 
     Button send_button;
@@ -47,6 +50,7 @@ public class Welcome extends AppCompatActivity {
 
 
         Intent intent = new Intent(this, HomePage.class);
+        intent.putExtra("STANDAR_PORT", (Serializable)STANDAR_PORT);
         startActivity(intent);
     }
 
