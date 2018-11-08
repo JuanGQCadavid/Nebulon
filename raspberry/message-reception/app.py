@@ -20,7 +20,12 @@ def threaded_getID(conn):
     conn.send(str.encode(str(id_neb)))
     
     conn.close()
-    
+
+
+def threaded_setWiFi():
+    pass
+
+
 def threaded_client(conn):
     while True:
         data = conn.recv(2048)
