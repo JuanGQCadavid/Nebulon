@@ -1,5 +1,7 @@
 #include <iostream>
 #include <fstream>
+#include <sstream> // istringstream
+#include <string>
 #include "../include/rapidjson/document.h"
 
 /* Needed for Rapidjson */
@@ -8,6 +10,9 @@ using namespace rapidjson;
 /* Writes a job into a cron file with the correct format. See crontab(5) */
 void create_job(std::ofstream& cron, const char* day, const char* start, const char*end,
 		const char* working_time, const char* sleeping_time, int schedule_type);
+
+/* Splits a string according to a delimiter */
+std::vector<std::string> split(const std::string& s, char delimiter);
 
 /* Reads from a JSON document and returns a pointer to a char* with the text */
 char* read_file(char* file_route);
@@ -36,9 +41,9 @@ main(int argc, char *argv[]){
     return 1;
   }
 
-  // Cron needed header
+  // Needed header for Cron
   cron << "SHELL=/bin/sh\n";
-  cron << "CRON_TZ=America/Bogota\n";
+  cron << "CRON_TZ=America/Bogota\n\n";
 
   try{
 
@@ -88,6 +93,36 @@ create_job(std::ofstream& cron, const char* day, const char* start, const char*e
   
   // cron << ;
   
+  std::vector<std::string> hours;
+  hours = split(string(start) + ":" + string(end), ':');
+
+  int hour, min;
+  // start = "10:00"
+  hour = std::stoi(hours[0]);
+  min = std::stoi(hours[1]);
+
+  // min and hour for crontab
+  cron << min << " " << hour << " ";
+
+  // end = "23:30"
+  hour = std::stoi(hours[2]);
+  min = std::stoi(hours[3]);
+  
+  cron << 
+  
+}
+
+std::vector<std::string>
+split(const std::string& s, char delimiter){
+
+  std::vector<std::string> tokens;
+  std::string token;
+  std::istringstream token_stream(s);
+
+  while(std::getline(token_stream, token, delimiter))
+    tokens.push_back(token);
+
+  return tokens;
 }
 
 char*
