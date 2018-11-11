@@ -17,13 +17,13 @@ main(int argc, char *argv[]){
     system(command);
     
   }else if(argc == 4){ //WPA-PSK
-
-    sprintf(command, "./add_network.sh %d %s %s", *(argv[1]) - 48, argv[2], argv[3]);
+    
+    sprintf(command, "./add_network.sh %d \"%s\" \"%s\"", *(argv[1]) - 48, argv[2], argv[3]);
     system(command);
     
   }else if(argc == 5){ //WPA-EAP
 
-    sprintf(command, "./add_network.sh %d %s %s %s", *(argv[1]) - 48, argv[2], argv[3], argv[4]);
+    sprintf(command, "./add_network.sh %d \"%s\" \"%s\" \"%s\"", *(argv[1]) - 48, argv[2], argv[3], argv[4]);
     system(command);
     
   }else{

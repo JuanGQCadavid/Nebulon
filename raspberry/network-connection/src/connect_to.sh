@@ -24,5 +24,5 @@ then
 fi
 
 # Restart units
-sudo systemctl restart wpa_supplicant@wlan0.service
-sudo systemctl restart dhcpcd.service
+#sudo systemctl restart wpa_supplicant@wlan0.service
+#sudo systemctl restart dhcpcd.service
