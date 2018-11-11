@@ -47,6 +47,7 @@
 2. Grant UPDATE, SELECT privileges:
    ``` GRANT UPDATE ON nebulon_database.nebulon TO 'nebulonHJGR'@'localhost'; ```
    ``` GRANT SELECT ON nebulon_database.nebulon TO 'nebulonHJGR'@'localhost'; ```
+   ``` GRANT SELECT ON nebulon_database.staff TO 'nebulonHJGR'@'localhost'; ```
 3. Check for granted privileges:
    ``` SHOW GRANTS FOR 'nebulonHJGR'@'localhost'; ```
 4. If you need to revoke a privilege:

@@ -31,8 +31,7 @@ class MySQLConnection{
   /* Wrapper function to send a select query to the database, and stores the
      result in 'fetched_value' */
   void select_query(const char* field, const char* table,
-		    const char* where_attribute, const char* where_value,
-		    char *&fetched_value);
+		    const char* condition, char *&fetched_value);
   
 };
 

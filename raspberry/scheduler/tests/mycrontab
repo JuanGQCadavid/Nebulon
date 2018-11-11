@@ -1,0 +1,5 @@
+SHELL=/bin/sh
+CRON_TZ=America/Bogota
+
+5 10 */32 * 1 /home/bean7/drive/workspace/university/eight-semester/p1/project/Nebulon/raspberry/message-transmission/src/message_transmission.py 8 02:00 00:05 2
+0 19 */32 * 1 /home/bean7/drive/workspace/university/eight-semester/p1/project/Nebulon/raspberry/message-transmission/src/message_transmission.py 3 03:00 00:00 2
