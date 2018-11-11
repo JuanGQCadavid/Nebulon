@@ -12,7 +12,7 @@ function add_network {
 
     # Erase file content
     > /etc/wpa_supplicant/wpa_supplicant-wlan0.conf
-
+    
     # Always will have this part at the beginning of the file
     echo -n -e "network={\n\tssid=" > /etc/wpa_supplicant/wpa_supplicant-wlan0.conf
     
