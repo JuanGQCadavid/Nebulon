@@ -1,0 +1,40 @@
+<html>
+<head>
+    <title>Login</title>
+    <meta charset="UTF-8">
+
+    <!-- Needed to load the css and js  files -->
+    {% load static %}
+    
+    <link rel="stylesheet" href="{% static 'nebsadmin/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.8/css/solid.css">
+    <link rel="stylesheet" type="text/css" href="{% static 'nebsadmin/style.css' %}">
+</head>
+<body>
+    <div class="modal-dialog text-center">
+        <div class="col-sm-9 main-section">
+            <div class="modal-content">
+
+                <div class="col-12 user-img">
+                    <img src="{% static 'nebsadmin/img/face.png' %}">
+                </div>
+
+                <div class="col-12 form-input">
+                    <form>
+                        <div class="form-group">
+                            <input type="email" class="form-control" placeholder="Ingresar Email">
+                        </div>
+                        <div class="form-group">
+                            <input type="password" class="form-control" placeholder="Ingresar Contraseña ">
+                        </div>
+                        <button type="submit" class="btn btn-succes">Login</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="{% static 'nebsadmin/js/jquery-3.3.1.min.js' %}"></script>
+    <script src="{% static 'nebsadmin/js/popper.min.js' %}"></script>
+    <script src="{% static 'nebsadmin/js/bootstrap.min.js' %}"></script>
+</body>
+</html>

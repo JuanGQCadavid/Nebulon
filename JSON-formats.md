@@ -46,7 +46,18 @@
 ```
 
   * app_to_server_ipr stands for nebulon to server ip address request
-  
+
+2. Mobile app requests user authentication
+
+```
+{
+    "message_size":##,
+    "message_type":"app_to_server_logr",
+    "username":"UserName123",
+    "password":"PassW0RD"
+}
+```
+
 ----------------------------------------------
 
 # NEBULON SERVER

@@ -175,7 +175,7 @@ main(int argc, char* argv[]){
 		std::string json_response;
 		
 		build_response(json, mysql, json_response, 1,
-			       json["user_name"].GetString(), json["password"].GetString());
+			       json["username"].GetString(), json["password"].GetString());
 		
 		// END making JSON response --------------------
 		
@@ -389,7 +389,7 @@ open_connection_to_database(MySQLConnection *&mysql, char* file){
 
 void
 build_response(Document& json, MySQLConnection* mysql, std::string& json_response, int response_type,
-	       const char* email, const char* password){
+	       const char* username, const char* password){
 
   if( response_type == 0 ){
     json_response = "\t\"message_type\":\"serv_to_app_ips\",\n\t\"nebulons_ips\":[\n";
@@ -434,15 +434,15 @@ build_response(Document& json, MySQLConnection* mysql, std::string& json_respons
 
     char* exist;
     
-    std::string condition("staff_email = '");
-    condition.append(email);
+    std::string condition("username = '");
+    condition.append(username);
     condition.append("' AND ");
-    condition.append(" staff_password = '");
+    condition.append(" password = '");
     condition.append(password);
     condition.append("'");
     
     // Makes a select query, and stores the result in neb_privateip
-    mysql -> select_query( "count(*)", "staff", condition.c_str(),
+    mysql -> select_query( "count(*)", "auth_user", condition.c_str(),
 			   exist );
 
     int number = atoi(exist);

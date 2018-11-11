@@ -1,6 +1,6 @@
 {
-    "message_size":130,
-    "message_type":"app_to_server_logr",
-    "user_name":"hjgr@nebulon.co",
-    "password":"nebulona"
+    "message_size":##,
+    "message_type":"server_logr",
+    "username":"UserName123",
+    "password":"PassW0RD"
 }

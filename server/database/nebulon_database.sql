@@ -64,13 +64,3 @@ CREATE TABLE IF NOT EXISTS nebulon(
   CONSTRAINT fk_nebulon_spec_id FOREIGN KEY(spec_id) REFERENCES nebulon_spec(spec_id),
   CONSTRAINT fk_nebulon_loan_id FOREIGN KEY(loan_id) REFERENCES loan(loan_id)
 );
-
-CREATE TABLE IF NOT EXISTS staff(
-  staff_id int NOT NULL,
-  staff_email varchar(45) NOT NULL,
-  staff_password varchar(45) NOT NULL,
-  staff_grade int NOT NULL,
-  staff_name varchar(45) NOT NULL,
-  staff_phone varchar(45),
-  PRIMARY KEY(staff_id)
-);
