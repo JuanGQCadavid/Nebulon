@@ -1,5 +1,9 @@
 <html>
 <head>
+
+    <!-- Needed to load the css and js  files -->
+    {% load static %}
+
     <title>Login</title>
     <meta charset="UTF-8">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
@@ -9,34 +13,24 @@
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.8/css/solid.css">
 </head>
 <body>
+    <div class="container">
+        <nav class="navbar navbar-expand-sm navbar-dark bg-dark">
+            <a href="#" class="navbar-brand ">Nebulon!!!</a> 
+            <ul class="nav navbar-nav">
+                <li class="nav-item active"><a href="#" class="nav-link">Inventario</a></li>
+                <li class="nav-item active"><a href="#" class="nav-link">Agregar</a></li>
+                <li class="nav-item active"><a href="#" class="nav-link">Arrendar</a></li>
+                <li class="nav-item active"><a href="#" class="nav-link">Salir</a></li>
+            </ul>
+            <form method="POST" action="" class="form-inline float-xl-right">
 
-
-
-        <div class="container">
-                <nav class="navbar navbar-expand-sm navbar-dark bg-dark">
-                   <a href="#" class="navbar-brand ">Nebulon!!!</a> 
-                        <ul class="nav navbar-nav">
-                            <li class="nav-item active"><a href="#" class="nav-link">Inventario</a></li>
-                            <li class="nav-item active"><a href="#" class="nav-link">Agregar</a></li>
-                            <li class="nav-item active"><a href="#" class="nav-link">Arrendar</a></li>
-                            <li class="nav-item active"><a href="#" class="nav-link">Salir</a></li>
-                            
+                <input type="text" class="form-control" placeholder="Buscar">
+                <button class="btn btn-outline-primary" type="submit">Buscar</button>
         
-                        </ul>
-                        <form action="" class="form-inline float-xl-right">
-                            <input type="text" class="form-control" placeholder="Buscar">
-                            <button class="btn btn-outline-primary" type="submit">Buscar</button>
-        
-                        </form>
+            </form>
                 
-                    </nav>
-            </div>
-
-
-
-
-
-
+        </nav>
+    </div>
 
     <div class="container">
         <div class="table-responsive">
@@ -75,8 +69,8 @@
         </table>
     </div>
     </div>
-    <script src="js/jquery-3.3.1.min.js"></script>
-    <script src="js/popper.min.js"></script>
+    <script src="{% static 'nebsadmin/js/jquery-3.3.1.min.js' %}"></script>
+    <script src="{% static 'nebsadmin/js/popper.min.js' %}"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
 </body>
 </html>

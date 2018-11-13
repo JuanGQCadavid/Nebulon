@@ -8,23 +8,30 @@ def login(request):
 
     # User sent a username and a password
     if request.method == 'POST':
+
+        # Context for the template
+        context = {
+            'authenticated': False,
+        }
+
         username = request.POST['userinput']
         password = request.POST['passwordinput']
         user = authenticate(username = username, password = password)
 
         if user is not None:
-            if user.is_active:
+            # If it is a superuser and is active
+            if user.is_superuser and user.is_active:
+                
                 django_login(request, user)
-                return render(request, 'nebsadmin/pprincipal.html')
-            else:
-                print ("Your account is not active")
-                return render(request, 'nebsadmin/login.html')
-            
-        else:
-            print("Wrong username or password. Try again!")
-            return render(request, 'nebsadmin/login.html')
+                return render(request, 'nebsadmin/index.html')
 
-        #return render(request, 'nebsadmin/pprincipal.html')
+            else:
+
+                return render(request, 'nebsadmin/login.html', context)
+                
+        else:
+
+            return render(request, 'nebsadmin/login.html', context)
             
     else: # GET request
         return render(request, 'nebsadmin/login.html')

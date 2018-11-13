@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="{% static 'nebsadmin/css/bootstrap.min.css' %}">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.8/css/solid.css">
     <link rel="stylesheet" type="text/css" href="{% static 'nebsadmin/style.css' %}">
-
+    
 </head>
 
 <body>
@@ -39,6 +39,10 @@
                         <input type="submit" class="btn btn-succes" value="Login">
 
                     </form>
+
+                    {% if authenticated == False %}
+                    <p class="text-warning">Usuario o Contraseña incorrectos</p>
+                    {% endif %}
 
                 </div>
             </div>
