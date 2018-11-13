@@ -1,4 +1,5 @@
-### IMPORTANT THINGS TO BE ABLE TO GET CONNECTED
+## Connect to an specified Network
+### Important things to have in count
 
 1. Units wpa_supplicant@wlan0.service, dhcpcd.service, ssh.service enabled
      
@@ -25,27 +26,19 @@
   
 ----------------------------
 
-### IMPLEMENTATION
+## Send IP address update
 
-1. Have in the raspi a static wpa.conf with the nebulon network.
-   -> static_wpa_supplicant.conf
-   -> ssid="nebulon", psk="nebulon-hotspot", key_mgmt=WPA-PSK
+1. Add to your ``` .bashrc ``` the following lines:
+   ``` export NEB_ID=## ```
+   ``` export REMOTE_SERVER="nebulon-enterprises.eastus.cloudapp.azure.com" ```
+
+2. Install ``` cron ``` package and enable the service
+   ``` $ sudo systemctl enable cron ```
+   ``` $ sudo systemctl start cron ```
+
+3. Inside ``` /etc/cron.hourly/ ``` create an script with the following inside
+   ``` /home/pi/workspace/Nebulon/raspberry/network-connection/src/send_ip_update.py ```
    
-2. Have in the raspi a volatile wpa.conf with the nebulon network.
-   -> wpa_supplicant-wlan0.conf
-
-3. Create a script that writes the general network configuration into
-   wpa_supplicant-wlan0.conf receiving parameters and followed by the nebulon
-   network.
-   -> add_network.sh
-
-4. Call that script from a C program and compile the program
-   $ run make from the ~/Workspace/Nebulon/shh-connection/files directory
-   
-   - The make compiles and gives the user ID necessary permissions to the binary
-
-5. Run the script connect_in.sh
-
 ---------------------------
 
 ### IF THE NEBULIZER GOES OUT OF INTERNET

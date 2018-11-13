@@ -25,13 +25,11 @@
 {
     "message_size" : ###(int),
     "message_type" : "neb_to_server_ipu",
-    "nebulon_id" : ##(int),
-    "nebulon_ip_address" : "##.##.##.##"
+    "nebulon_id" : ##(int)
 }
 ```
 
   * neb_to_server_ipu stands for nebulon to server ip address update
-  * "##.##.##.##" is the nebulon's private ip address
 
 ## From Mobile App
 

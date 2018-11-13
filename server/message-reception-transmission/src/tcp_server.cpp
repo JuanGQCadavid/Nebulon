@@ -149,7 +149,7 @@ main(int argc, char* argv[]){
 	      else if( strcmp(message_type, "neb_to_server_ipu") == 0 )
 		// Make update_query
 		mysql -> update_query( "nebulon", "nebulon_private_ip",
-				       json["nebulon_ip_address"].GetString(), "nebulon_id",
+				       address, "nebulon_id",
 				       std::to_string(json["nebulon_id"].GetInt()).c_str() );
 		
 	      else if( strcmp(message_type, "app_to_server_ipr") == 0 ){

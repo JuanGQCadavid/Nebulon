@@ -15,16 +15,26 @@ def generateRandom():
 
 if __name__ == '__main__':
 
-    liquid_level = generateRandom()
+    try:
+
+        liquid_level = generateRandom()
+
+    except:
+
+        print("Error getting liquid level data", file=sys.stderr)
+        exit()
 
     # Build the necessary json
+    try:
+        #    Nebulizer id
+        neb_id = os.environ.get('NEB_ID')
+        
+    except:
+        
+        print("Error trying to get the environment variable NEB_ID", file=sys.stderr)
 
-    # Nebulizer id
-    neb_id = os.environ.get('NEB_ID')
-    
+        
     json = "\"message_type\":\"neb_to_server_llu\",\n\t\"nebulon_id\":%s,\n\t\"nebulon_liquid_level\":%d\n}" % (neb_id, liquid_level)
-
-    print('Json len: %d' % len(json))
 
     message_size = len(json) + 21
     
@@ -32,11 +42,12 @@ if __name__ == '__main__':
 
     json = json_aux + json
 
-    print('Json len: %d' % len(json))
-
     # Send the JSON
-    socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    socket.connect(("localhost", 17777))
-    socket.send(str.encode(json))
-    socket.close()
-    
+    try:
+        remote_server = os.environ.get('REMOTE_SERVER')
+        socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        socket.connect((remote_server, 17777))
+        socket.send(str.encode(json))
+        socket.close()
+    except:
+        print("socket: Error trying to send the json to the remote server", file=sys.stderr)
