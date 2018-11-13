@@ -148,7 +148,7 @@ main(int argc, char* argv[]){
 	      
 	      else if( strcmp(message_type, "neb_to_server_ipu") == 0 ){
 
-		string ip("\"");
+		std::string ip("\"");
 		ip.append(json["nebulon_ip_address"].GetString());
 		ip.append("\"");
 		
