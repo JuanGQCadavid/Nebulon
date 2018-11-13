@@ -5,14 +5,14 @@ import java.io.Serializable;
 
 public class Datos_List_Nebulizer implements Serializable {
     private int id;
-    private String id_title;
-    private String mac_title;
+    private String ip;
+    private String mac;
 
 
-    public Datos_List_Nebulizer(int id, String id_title, String mac_title){
+    public Datos_List_Nebulizer(int id, String ip, String mac){
         this.id = id;
-        this.id_title = id_title;
-        this.mac_title = mac_title;
+        this.ip = ip;
+        this.mac = mac;
     }
 
 
@@ -24,20 +24,20 @@ public class Datos_List_Nebulizer implements Serializable {
         this.id = id;
     }
 
-    public String getId_title() {
-        return id_title;
+    public String getIp() {
+        return ip;
     }
 
-    public void setId_title(String id_title) {
-        this.id_title = id_title;
+    public void setIp(String ip) {
+        this.ip = ip;
     }
 
-    public String getMac_title() {
-        return mac_title;
+    public String getMac() {
+        return mac;
     }
 
-    public void setMac_title(String mac_title) {
-        this.mac_title = mac_title;
+    public void setMac(String mac_title) {
+        this.mac = mac;
     }
 
 }

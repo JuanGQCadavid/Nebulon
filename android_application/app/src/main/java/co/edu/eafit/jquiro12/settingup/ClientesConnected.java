@@ -23,7 +23,7 @@ public class ClientesConnected extends AsyncTask<Datos_List_Nebulizer, Integer, 
 
         String ip;
         for(Datos_List_Nebulizer dato: datos){
-            ip = dato.getId_title();
+            ip = dato.getIp();
             try {
                 if(Inet4Address.getByName(ip).isReachable(1500) == true){
                     //Put on the view

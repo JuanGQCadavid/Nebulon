@@ -9,17 +9,17 @@
 if [ $1 -eq 0 ]
 then
     
-    ./add_network_bin $1 $2
+    ./add_network_bin $1 "$2"
     
 elif [ $1 -eq 1 ]
 then
     
-    ./add_network_bin $1 $2 $3
+    ./add_network_bin $1 "$2" "$3"
     
 elif [ $1 -eq 2 ]
 then
     
-    ./add_network_bin $1 $2 $3 $4    
+    ./add_network_bin $1 "$2" "$3" "$4"    
     
 fi
 

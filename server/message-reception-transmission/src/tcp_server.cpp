@@ -21,7 +21,8 @@ void open_connection_to_database(MySQLConnection *&mysql, char* file);
 
 /* Function that constructs a json response to a previous request 
    (ip addresses request by app) and stores the result in 'json_response' */
-void build_response(Document &json, MySQLConnection *mysql, std::string &json_response);
+void build_response(Document& json, MySQLConnection* mysql, std::string& json_response, int response_type,
+		    const char* email, const char* password);
 
 int
 main(int argc, char* argv[]){
@@ -128,7 +129,8 @@ main(int argc, char* argv[]){
 	    // Message received from nebulon or mobile app
 	    if( (strcmp(message_type, "neb_to_server_llu") == 0)
 		|| (strcmp(message_type, "neb_to_server_ipu") == 0)
-		|| (strcmp(message_type, "app_to_server_ipr") == 0) ){
+		|| (strcmp(message_type, "app_to_server_ipr") == 0)
+		|| (strcmp(message_type, "app_to_server_logr") == 0)){
 
 	      // database controller object
 	      MySQLConnection *mysql;
@@ -156,7 +158,7 @@ main(int argc, char* argv[]){
 		
 		std::string json_response;
 
-		build_response(json, mysql, json_response);
+		build_response(json, mysql, json_response, 0, NULL, NULL);
 
 		// END making JSON response --------------------
 
@@ -165,6 +167,23 @@ main(int argc, char* argv[]){
 		if( send(client_socket_fd, json_response.c_str(), json_response.size(), 0) == -1 )
 		  perror("send()");
 
+		// END send() ---------------------------
+	      }else if( strcmp(message_type, "app_to_server_logr") == 0 ){
+
+		// making JSON response --------------------
+		
+		std::string json_response;
+		
+		build_response(json, mysql, json_response, 1,
+			       json["username"].GetString(), json["password"].GetString());
+		
+		// END making JSON response --------------------
+		
+		// send() -----------------------------
+		
+		if( send(client_socket_fd, json_response.c_str(), json_response.size(), 0) == -1 )
+		  perror("send()");
+		
 		// END send() ---------------------------
 	      }
 
@@ -369,41 +388,81 @@ open_connection_to_database(MySQLConnection *&mysql, char* file){
 }
 
 void
-build_response(Document &json, MySQLConnection *mysql, std::string &json_response){
-  
-  json_response = "\t\"message_type\" : \"serv_to_app_ips\",\n\t\"nebulons_ips\" : [\n";
+build_response(Document& json, MySQLConnection* mysql, std::string& json_response, int response_type,
+	       const char* username, const char* password){
 
-  const Value& nebulons_ids = json["nebulons_ids"];
-  for( SizeType it = 0; it < nebulons_ids.Size(); ++it ){
+  if( response_type == 0 ){
+    json_response = "\t\"message_type\":\"serv_to_app_ips\",\n\t\"nebulons_ips\":[\n";
 
-    char* neb_privateip;
-    const char* neb_id = std::to_string(nebulons_ids[it].GetInt()).c_str();
+    const Value& nebulons_ids = json["nebulons_ids"];
+    for( SizeType it = 0; it < nebulons_ids.Size(); ++it ){
+
+      char* neb_privateip;
+      std::string condition("nebulon_id = " + std::to_string(nebulons_ids[it].GetInt()));
+    
+      const char* neb_id = std::to_string(nebulons_ids[it].GetInt()).c_str();
+    
+      // Makes a select query, and stores the result in neb_privateip
+      mysql -> select_query( "nebulon_private_ip", "nebulon", condition.c_str(),
+			     neb_privateip );
+
+      json_response.append("\t\t{\n\t\t\t\"neb_id\":");
+      json_response.append(neb_id);
+      json_response.append(",\n\t\t\t\"neb_ip\":\"");
+      json_response.append(neb_privateip);
+      json_response.append("\"\n\t\t}");
+
+      if( (it + 1) < nebulons_ids.Size() )
+	json_response.append(",\n");
+      else
+	json_response.append("\n");
+    }
+
+    json_response.append("\t]\n}");
+    std::string json_aux = "{\n\t\"message_size\":";
+
+    int message_size = json_response.size() + json_aux.size();
+    // +2: the comma and the \n
+    message_size += ( std::to_string(message_size).size() + 2 );
+    json_aux.append( (std::to_string(message_size) += ",\n") );
+    json_aux.append( json_response );
+    json_response = json_aux;
+
+  } else if( response_type == 1 ){
+   
+    json_response = "\t\"message_type\":\"serv_to_app_logrs\",\n\t\"state\":";
+
+    char* exist;
+    
+    std::string condition("username = '");
+    condition.append(username);
+    condition.append("' AND ");
+    condition.append(" password = '");
+    condition.append(password);
+    condition.append("'");
+    
     // Makes a select query, and stores the result in neb_privateip
-    mysql -> select_query( "nebulon_private_ip", "nebulon",
-			   "nebulon_id", neb_id,
-			   neb_privateip);
+    mysql -> select_query( "count(*)", "auth_user", condition.c_str(),
+			   exist );
 
-    json_response.append("\t\t{\n\t\t\t\"neb_id\" : ");
-    json_response.append(neb_id);
-    json_response.append(",\n\t\t\t\"neb_ip\" : \"");
-    json_response.append(neb_privateip);
-    json_response.append("\"\n\t\t}");
+    int number = atoi(exist);
 
-    if( (it + 1) < nebulons_ids.Size() )
-      json_response.append(",\n");
+    if(number > 0)
+      json_response.append("\"accepted\"\n");
     else
-      json_response.append("\n");
+      json_response.append("\"rejected\"\n");
+    
+    json_response.append("}");
+    std::string json_aux = "{\n\t\"message_size\":";
+    
+    int message_size = json_response.size() + json_aux.size();
+    // +2: the comma and the \n
+    message_size += ( std::to_string(message_size).size() + 2 );
+    json_aux.append( (std::to_string(message_size) += ",\n") );
+    json_aux.append( json_response );
+    json_response = json_aux;
+   
   }
-
-  json_response.append("\t]\n}");
-  std::string json_aux = "{\n\t\"message_size\" : ";
-
-  int message_size = json_response.size() + json_aux.size();
-  // +2: the comma and the \n
-  message_size += ( std::to_string(message_size).size() + 2 );
-  json_aux.append( (std::to_string(message_size) += ",\n") );
-  json_aux.append( json_response );
-  json_response = json_aux;
   
 }
 

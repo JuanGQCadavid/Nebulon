@@ -12,7 +12,7 @@ function add_network {
 
     # Erase file content
     > /etc/wpa_supplicant/wpa_supplicant-wlan0.conf
-
+    
     # Always will have this part at the beginning of the file
     echo -n -e "network={\n\tssid=" > /etc/wpa_supplicant/wpa_supplicant-wlan0.conf
     
@@ -49,20 +49,20 @@ new_ssid=$2
 if [ $type -eq 0 ]
 then
     
-    add_network $new_ssid
+    add_network "$new_ssid"
     
 elif [ $type -eq 1 ]
 then
     
     new_password=$3
-    add_network $new_ssid $new_password
+    add_network "$new_ssid" "$new_password"
     
 elif [ $type -eq 2 ]
 then
 
     new_user=$3
     new_password=$4
-    add_network $new_ssid $new_user $new_password
+    add_network "$new_ssid" "$new_user" "$new_password"
     
 else
     

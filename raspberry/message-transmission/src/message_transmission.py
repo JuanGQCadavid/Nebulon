@@ -1,3 +1,5 @@
+#!/bin/python
+
 import sys # argv, stderr, exit()
 from database_connection import Connection
 

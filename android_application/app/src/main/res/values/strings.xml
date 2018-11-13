@@ -6,6 +6,14 @@
     <string name="button_recover">Forgot your Password?</string>
     <string name="switch_session">Remember me</string>
     <string name="text_wrong">Wrong user credential</string>
+
+    <string-array name="network_options">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>No papito, esta no es.</item>
+
+    </string-array>
 </resources>
 
 

@@ -55,8 +55,7 @@ MySQLConnection::update_query(const char* table,
 
 void
 MySQLConnection::select_query(const char* field, const char* table,
-			      const char* where_attribute, const char* where_value,
-			      char *&fetched_value){
+			      const char* condition, char *&fetched_value){
   
   // The mysql_query() function does not require the ';' at the end
   std::string query;
@@ -66,9 +65,10 @@ MySQLConnection::select_query(const char* field, const char* table,
   query.append(" FROM ");
   query.append(table);
   query.append(" WHERE ");
-  query.append(where_attribute);
-  query.append(" = ");
-  query.append(where_value);
+  // query.append(where_attribute);
+  // query.append(" = ");
+  // query.append(where_value);
+  query.append(condition);
 
   printf("Making query: %s\n", query.c_str());
 
