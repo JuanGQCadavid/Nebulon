@@ -34,7 +34,9 @@ import java.util.ArrayList;
 public class Nebulizer_founded extends AppCompatActivity {
 
     public final String CODE = "co.edu.eafit.jquiro12.settingup.Nebulizer_founded.nebulonList";
-    private final int STANDAR_PORT = 5555;
+    private int STANDAR_PORT;
+
+    ArrayList<Datos_List_Nebulizer> lista_test;
 
     ListView listView;
     ArrayList<Datos_List_Nebulizer> lista;
@@ -46,8 +48,12 @@ public class Nebulizer_founded extends AppCompatActivity {
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
 
+        STANDAR_PORT = (Integer) getIntent().getExtras().getSerializable("STANDAR_PORT");
+
         //Generate the list
         lista = getH(); //new ArrayList<>();
+
+        lista_test = getListaTest();
 
 
         // Find the view list
@@ -66,6 +72,20 @@ public class Nebulizer_founded extends AppCompatActivity {
 
 
     }
+    public ArrayList<Datos_List_Nebulizer> getListaTest(){
+        ArrayList<Datos_List_Nebulizer> yesSr = new ArrayList<Datos_List_Nebulizer>();
+        //int id, String ip, String mac
+        yesSr.add(new Datos_List_Nebulizer(1,"192.168.0.1","mac"));
+        yesSr.add(new Datos_List_Nebulizer(2,"192.168.0.2","mac"));
+        yesSr.add(new Datos_List_Nebulizer(3,"192.168.0.3","mac"));
+        yesSr.add(new Datos_List_Nebulizer(4,"192.168.0.4","mac"));
+        yesSr.add(new Datos_List_Nebulizer(5,"192.168.0.5","mac"));
+
+        return yesSr;
+
+
+
+    }
 
 
     public void back(View view) {
@@ -79,15 +99,23 @@ public class Nebulizer_founded extends AppCompatActivity {
 
         System.out.println("PENDIENTE");
         for (Datos_List_Nebulizer datoActual: nebulones_to_configure){
-            System.out.println(datoActual.getId_title());
+            System.out.println(datoActual.getIp());
 
         }
 
+
+
         Intent intent = new Intent(this, ConfigureNebulones.class);
-        intent.putExtra("sup", (Serializable) nebulones_to_configure);
+        //intent.putExtra("Neb_found-Config_neb", (Serializable) nebulones_to_configure);
+        intent.putExtra("Neb_found-Config_neb", (Serializable) lista);
+        intent.putExtra("STANDAR_PORT", (Serializable) STANDAR_PORT);
+
+
         startActivity(intent);
 
     }
+
+
 
 
     public ArrayList<Datos_List_Nebulizer> localizeSelectedNebulones(ListView listImplemented ){
@@ -186,6 +214,8 @@ public class Nebulizer_founded extends AppCompatActivity {
 
     private int getId(String ip){
         try {
+            if(!Inet4Address.getByName(ip).isReachable(1500) == true)
+                return -1;
 
             Socket connectionNebulizer = new Socket(ip,STANDAR_PORT);
 
@@ -212,8 +242,12 @@ public class Nebulizer_founded extends AppCompatActivity {
             System.out.println(response);
             System.out.println("----------------------------------");
 
+
+
             Toast.makeText(getApplicationContext(),response,Toast.LENGTH_SHORT).show();
             connectionNebulizer.close();
+
+            return Integer.parseInt(response);
 
         } catch (Exception e) {
             e.printStackTrace();

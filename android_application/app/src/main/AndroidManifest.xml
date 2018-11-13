@@ -23,7 +23,8 @@
         <activity android:name=".Nebulizer_founded" />
         <activity android:name=".ConfigureNebulones" />
         <activity android:name=".LoadingNebulizer" />
-        <activity android:name=".routineMain"></activity>
+        <activity android:name=".routineMain" />
+        <activity android:name=".CheckNebulones"></activity>
     </application>
 
 </manifest>

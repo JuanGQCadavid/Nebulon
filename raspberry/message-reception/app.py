@@ -22,7 +22,8 @@ def threaded_getID(conn):
     conn.close()
 
 
-def threaded_setWiFi():
+def threaded_setWiFi(conn):
+    conn.close()
     pass
 
 
@@ -34,7 +35,7 @@ def threaded_client(conn):
         if not data:
             break
 
-        print(type(data_decode))
+        print(data_decode)
       
         data_object = json.loads(data_decode)
         message_type = data_object["message_type"]
@@ -45,8 +46,8 @@ def threaded_client(conn):
                 threaded_getID(conn)
                 break;
         
-        elif(message_type == "i_dont_know"):
-                #Others
+        elif(message_type == "app_to_neb_net"):
+                threaded_setWiFi(conn)
                 break;
         else:
             reply = "404"

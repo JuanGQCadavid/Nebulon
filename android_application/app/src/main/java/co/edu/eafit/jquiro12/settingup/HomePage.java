@@ -6,12 +6,25 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
 
+import java.io.Serializable;
+
 public class HomePage extends AppCompatActivity {
+    private int STANDAR_PORT;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home_page);
+        STANDAR_PORT = 5555;
+        try{
+            STANDAR_PORT = (Integer) getIntent().getExtras().getSerializable("STANDAR_PORT");
+
+        }catch (Exception e){
+            e.printStackTrace();
+
+        }
+
+
 
         /*
         // Get the Intent that started this activity and extract the string
@@ -29,6 +42,7 @@ public class HomePage extends AppCompatActivity {
 
     public void installNebulon(View view) {
         Intent intent = new Intent(this, Nebulizer_founded.class);
+        intent.putExtra("STANDAR_PORT", (Serializable)STANDAR_PORT);
         startActivity(intent);
 
 
