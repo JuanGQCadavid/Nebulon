@@ -112,6 +112,18 @@
                     android:inputType="text"
                     android:visibility="gone"
                     />
+
+                <TextView
+                    android:id="@+id/estaNo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Marica, vos no entendes que no es no?"
+                    android:visibility="gone"
+                    android:textSize="30sp"
+                    android:textColor="@color/colorPrimaryDark"
+
+                    />
+
             </LinearLayout>
 
             <LinearLayout

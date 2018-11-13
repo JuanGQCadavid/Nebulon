@@ -23,8 +23,9 @@
         android:layout_margin="15sp"/>
 
     <TextView
+        android:id="@+id/loading_status"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="1/5"
+        android:text="Por favor espere."
         android:textSize="25sp"/>
 </LinearLayout>

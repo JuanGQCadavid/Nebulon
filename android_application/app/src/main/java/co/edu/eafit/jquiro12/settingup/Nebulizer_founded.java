@@ -36,6 +36,8 @@ public class Nebulizer_founded extends AppCompatActivity {
     public final String CODE = "co.edu.eafit.jquiro12.settingup.Nebulizer_founded.nebulonList";
     private int STANDAR_PORT;
 
+    ArrayList<Datos_List_Nebulizer> lista_test;
+
     ListView listView;
     ArrayList<Datos_List_Nebulizer> lista;
     @Override
@@ -51,6 +53,8 @@ public class Nebulizer_founded extends AppCompatActivity {
         //Generate the list
         lista = getH(); //new ArrayList<>();
 
+        lista_test = getListaTest();
+
 
         // Find the view list
         listView = (ListView) findViewById(R.id.nebulizers_list);
@@ -64,6 +68,20 @@ public class Nebulizer_founded extends AppCompatActivity {
 
         //ClientesConnected p = new ClientesConnected(lista,listView);
         //p.start();
+
+
+
+    }
+    public ArrayList<Datos_List_Nebulizer> getListaTest(){
+        ArrayList<Datos_List_Nebulizer> yesSr = new ArrayList<Datos_List_Nebulizer>();
+        //int id, String ip, String mac
+        yesSr.add(new Datos_List_Nebulizer(1,"192.168.0.1","mac"));
+        yesSr.add(new Datos_List_Nebulizer(2,"192.168.0.2","mac"));
+        yesSr.add(new Datos_List_Nebulizer(3,"192.168.0.3","mac"));
+        yesSr.add(new Datos_List_Nebulizer(4,"192.168.0.4","mac"));
+        yesSr.add(new Datos_List_Nebulizer(5,"192.168.0.5","mac"));
+
+        return yesSr;
 
 
 
@@ -88,8 +106,9 @@ public class Nebulizer_founded extends AppCompatActivity {
 
 
         Intent intent = new Intent(this, ConfigureNebulones.class);
-        intent.putExtra("Neb_found-Config_neb", (Serializable) nebulones_to_configure);
-
+        //intent.putExtra("Neb_found-Config_neb", (Serializable) nebulones_to_configure);
+        intent.putExtra("Neb_found-Config_neb", (Serializable) lista);
+        intent.putExtra("STANDAR_PORT", (Serializable) STANDAR_PORT);
 
 
         startActivity(intent);
