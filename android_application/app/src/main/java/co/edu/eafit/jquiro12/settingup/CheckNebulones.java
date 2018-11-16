@@ -20,6 +20,8 @@ public class CheckNebulones extends AppCompatActivity {
     ListView connectedList;
     ListView noConnectedList;
 
+    Data program_data;
+
 
 
     @Override
@@ -29,8 +31,7 @@ public class CheckNebulones extends AppCompatActivity {
 
         nebulonesConnected = (ArrayList<Datos_List_Nebulizer>) getIntent().getExtras().getSerializable("neb_connected");
         nebulonesNoConnected = (ArrayList<Datos_List_Nebulizer>) getIntent().getExtras().getSerializable("neb_no_connected");
-        STANDAR_PORT = (Integer)getIntent().getExtras().getSerializable("STANDAR_PORT");
-        wifiData = (String[]) getIntent().getExtras().getSerializable("Neb_found-wifiData");
+        program_data = (Data) getIntent().getSerializableExtra("global_data");
 
         if(nebulonesConnected == null){
             nebulonesConnected = new ArrayList<>();
@@ -53,10 +54,10 @@ public class CheckNebulones extends AppCompatActivity {
     }
 
     public void Next(View view) {
-        Intent intent = new Intent(this, routineMain.class);
-        intent.putExtra("neb_list", (Serializable) nebulonesConnected);
-        intent.putExtra("STANDAR_PORT", (Serializable) STANDAR_PORT);
+        program_data.setList(nebulonesConnected);
 
+        Intent intent = new Intent(this, routineMain.class);
+        intent.putExtra("global_data", program_data);
         startActivity(intent);
 
     }
@@ -65,8 +66,7 @@ public class CheckNebulones extends AppCompatActivity {
         Intent intent = new Intent(this, LoadingNebulizer.class);
         intent.putExtra("neb_no_connected_C", (Serializable) nebulonesNoConnected);
         intent.putExtra("neb_connected_C", (Serializable) nebulonesConnected);
-        intent.putExtra("STANDAR_PORT", (Serializable) STANDAR_PORT);
-        intent.putExtra("Neb_found-wifiData",(Serializable) wifiData);
+        intent.putExtra("global_data", program_data);;
 
         startActivity(intent);
 

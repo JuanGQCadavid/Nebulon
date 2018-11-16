@@ -127,6 +127,7 @@
                 android:ems="10"
                 android:inputType="time"
                 android:hint="@string/formato_hora"
+                android:editable="false"
                 android:layout_gravity="center"/>
 
         </LinearLayout>
@@ -137,8 +138,9 @@
             android:id="@+id/from_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/rewind"
-            tools:ignore="ContentDescription" />
+            tools:ignore="ContentDescription"
+            android:background="@drawable/alarmclock"
+            />
 
     </LinearLayout>
 
@@ -173,7 +175,7 @@
             android:id="@+id/till_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/rewind"
+            android:background="@drawable/alarmclock"
             tools:ignore="ContentDescription" />
 
     </LinearLayout>

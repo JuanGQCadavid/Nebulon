@@ -12,12 +12,14 @@ import java.util.ArrayList;
 
 public class MakeRoutine extends AppCompatActivity {
 
-
     Routine routine;
     ListView routineList;
 
+
     EditText title_view;
     EditText description_view;
+
+    Data program_data;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,12 +29,14 @@ public class MakeRoutine extends AppCompatActivity {
         title_view = (EditText) findViewById(R.id.titulo_v);
         description_view =  (EditText) findViewById(R.id.desc_v);
 
+        program_data = (Data) getIntent().getSerializableExtra("global_data");
 
         //subroutines = test();
-        routine = (Routine) getIntent().getSerializableExtra("routine-R-M");
+        routine = program_data.getRoutine();
 
         if(routine == null){
             routine = new Routine();
+            program_data.setRoutine(routine);
         }
 
 
@@ -40,7 +44,7 @@ public class MakeRoutine extends AppCompatActivity {
             title_view.setText(routine.getName());
 
         if(!routine.getDescription().equals(""))
-            description_view.setText(routine.getName());
+            description_view.setText(routine.getDescription());
 
 
 
@@ -55,6 +59,10 @@ public class MakeRoutine extends AppCompatActivity {
 
     public void next(View view) {
 
+        program_data.addRoutineToRoutines(program_data.getRoutine());
+        Intent intent = new Intent(this, routineMain.class);
+        intent.putExtra("global_data",program_data);
+        startActivity(intent);
     }
     /*
     public ArrayList<Subroutine> test(){
@@ -67,6 +75,8 @@ public class MakeRoutine extends AppCompatActivity {
     */
 
     public void back(View view) {
+
+
     }
 
     public void addRoutine(View view) {
@@ -74,10 +84,12 @@ public class MakeRoutine extends AppCompatActivity {
             routine.setName(title_view.getText().toString());
 
         if(!routine.getDescription().equals(description_view.getText().toString()))
-            routine.setDescription(title_view.getText().toString());
+            routine.setDescription(description_view.getText().toString());
+
+        program_data.setRoutine(routine);
 
         Intent intent = new Intent(this, RoutineDays.class);
-        intent.putExtra("routine-M-R", routine);
+        intent.putExtra("global_data", program_data);
 
         startActivity(intent);
 

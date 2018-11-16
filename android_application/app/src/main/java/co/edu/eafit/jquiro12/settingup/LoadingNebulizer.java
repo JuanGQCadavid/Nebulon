@@ -31,7 +31,7 @@ public class LoadingNebulizer extends AppCompatActivity {
 
     TextView txt_view_loading;
 
-    private static final String TAG = "RxAndroidSamples";
+    Data program_data;
 
     //private final CompositeDisposable disposables = new CompositeDisposable();
 
@@ -40,14 +40,15 @@ public class LoadingNebulizer extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_loading_nebulizer);
 
+        program_data = (Data) getIntent().getSerializableExtra("global_data");
 
         nebulonList = (ArrayList<Datos_List_Nebulizer>) getIntent().getExtras().getSerializable("Config_neb-Load_neb");
         if(nebulonList == null)
             nebulonList = (ArrayList<Datos_List_Nebulizer>) getIntent().getExtras().getSerializable("neb_no_connected_C");
 
 
-        wifiData = (String[]) getIntent().getExtras().getSerializable("Neb_found-wifiData");
-        STANDAR_PORT = (Integer) getIntent().getExtras().getSerializable("STANDAR_PORT");
+        wifiData = program_data.getWiFiData();
+        STANDAR_PORT = program_data.getPort();
 
 
         nebulonConnected = (ArrayList<Datos_List_Nebulizer>) getIntent().getExtras().getSerializable("neb_connected_C");;
@@ -70,11 +71,11 @@ public class LoadingNebulizer extends AppCompatActivity {
 
     public void next(){
         Intent intent = new Intent(this, CheckNebulones.class);
+
+
+        intent.putExtra("global_data",program_data);
         intent.putExtra("neb_no_connected", (Serializable) nebulonNoConnected);
         intent.putExtra("neb_connected", (Serializable) nebulonConnected);
-        intent.putExtra("Neb_found-wifiData", (Serializable) wifiData);
-        intent.putExtra("STANDAR_PORT", (Serializable) STANDAR_PORT);
-
         startActivity(intent);
     }
 

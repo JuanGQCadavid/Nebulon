@@ -36,6 +36,8 @@ public class Nebulizer_founded extends AppCompatActivity {
     public final String CODE = "co.edu.eafit.jquiro12.settingup.Nebulizer_founded.nebulonList";
     private int STANDAR_PORT;
 
+    Data program_data;
+
     ArrayList<Datos_List_Nebulizer> lista_test;
 
     ListView listView;
@@ -48,7 +50,9 @@ public class Nebulizer_founded extends AppCompatActivity {
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
 
-        STANDAR_PORT = (Integer) getIntent().getExtras().getSerializable("STANDAR_PORT");
+        program_data = (Data) getIntent().getSerializableExtra("global_data");
+
+        STANDAR_PORT = program_data.getPort();
 
         //Generate the list
         lista = getH(); //new ArrayList<>();
@@ -91,26 +95,24 @@ public class Nebulizer_founded extends AppCompatActivity {
     public void back(View view) {
 
         Intent intent = new Intent(this, HomePage.class);
+        intent.putExtra("global_data", program_data);
         startActivity(intent);
     }
 
     public void next(View view) {
         ArrayList<Datos_List_Nebulizer>  nebulones_to_configure = localizeSelectedNebulones(listView);
 
-        System.out.println("PENDIENTE");
         for (Datos_List_Nebulizer datoActual: nebulones_to_configure){
             System.out.println(datoActual.getIp());
 
         }
 
 
+        program_data.setList(lista);
 
         Intent intent = new Intent(this, ConfigureNebulones.class);
         //intent.putExtra("Neb_found-Config_neb", (Serializable) nebulones_to_configure);
-        intent.putExtra("Neb_found-Config_neb", (Serializable) lista);
-        intent.putExtra("STANDAR_PORT", (Serializable) STANDAR_PORT);
-
-
+        intent.putExtra("global_data", program_data);
         startActivity(intent);
 
     }
@@ -213,6 +215,7 @@ public class Nebulizer_founded extends AppCompatActivity {
     }
 
     private int getId(String ip){
+        System.out.println("IP ->" + ip + " standar port " + STANDAR_PORT);
         try {
             if(!Inet4Address.getByName(ip).isReachable(1500) == true)
                 return -1;

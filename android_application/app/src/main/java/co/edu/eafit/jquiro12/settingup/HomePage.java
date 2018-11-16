@@ -9,20 +9,13 @@ import android.widget.TextView;
 import java.io.Serializable;
 
 public class HomePage extends AppCompatActivity {
-    private int STANDAR_PORT;
-
+    Data program_data;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home_page);
-        STANDAR_PORT = 5555;
-        try{
-            STANDAR_PORT = (Integer) getIntent().getExtras().getSerializable("STANDAR_PORT");
 
-        }catch (Exception e){
-            e.printStackTrace();
-
-        }
+        program_data = (Data) getIntent().getSerializableExtra("global_data");
 
 
 
@@ -42,7 +35,7 @@ public class HomePage extends AppCompatActivity {
 
     public void installNebulon(View view) {
         Intent intent = new Intent(this, Nebulizer_founded.class);
-        intent.putExtra("STANDAR_PORT", (Serializable)STANDAR_PORT);
+        intent.putExtra("global_data", program_data);
         startActivity(intent);
 
 

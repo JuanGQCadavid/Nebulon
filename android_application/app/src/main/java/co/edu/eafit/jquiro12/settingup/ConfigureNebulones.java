@@ -25,13 +25,14 @@ public class ConfigureNebulones extends AppCompatActivity {
 
     Spinner spinner1;
 
-    private int STANDAR_PORT;
+    Data program_data;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_configure_nebulones);
 
+        program_data = (Data) getIntent().getSerializableExtra("global_data");
         //Generate the list
         nebulonList = getNebulonesFound();
 
@@ -49,7 +50,6 @@ public class ConfigureNebulones extends AppCompatActivity {
         txt_pw = (EditText) findViewById(R.id.password);
         txt_un = (EditText) findViewById(R.id.userName);
 
-        STANDAR_PORT = (Integer)getIntent().getExtras().getSerializable("STANDAR_PORT");
 
 
         spinner1.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -99,9 +99,7 @@ public class ConfigureNebulones extends AppCompatActivity {
     }
 
     public ArrayList<Datos_List_Nebulizer>  getNebulonesFound(){
-        ArrayList<Datos_List_Nebulizer> list = (ArrayList<Datos_List_Nebulizer>) getIntent().getExtras().getSerializable("Neb_found-Config_neb");
-
-        System.out.println("PENDIENTE");
+        ArrayList<Datos_List_Nebulizer> list = program_data.getList();
         for (Datos_List_Nebulizer datoActual: list){
             System.out.println(datoActual.getIp());
 
@@ -119,12 +117,11 @@ public class ConfigureNebulones extends AppCompatActivity {
 
 
         String[] WiFiData = getWiFiData();
+        program_data.setWiFiData(WiFiData);
 
         Intent intent = new Intent(this, LoadingNebulizer.class);
+        intent.putExtra("global_data", program_data);
         intent.putExtra("Config_neb-Load_neb",(Serializable)nebulonList);
-        intent.putExtra("Neb_found-wifiData",(Serializable)WiFiData);
-        intent.putExtra("STANDAR_PORT",(Serializable)STANDAR_PORT);
-
         startActivity(intent);
     }
 
@@ -140,3 +137,7 @@ public class ConfigureNebulones extends AppCompatActivity {
     }
 
 }
+
+/*
+
+ */

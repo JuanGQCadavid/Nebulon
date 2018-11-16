@@ -53,13 +53,17 @@ public class RoutineDays extends AppCompatActivity implements View.OnClickListen
 
     Routine routine;
 
+    Data program_data;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_routine_days);
         //Widget EditText donde se mostrara la hora obtenida
 
-        routine = (Routine) getIntent().getSerializableExtra("routine-M-R");
+        program_data = (Data) getIntent().getSerializableExtra("global_data");
+
+        routine = program_data.getRoutine();
 
         etHora = (EditText) findViewById(R.id.from_txt);
         ibObtenerHora= (ImageButton) findViewById(R.id.from_btn);
@@ -182,8 +186,10 @@ public class RoutineDays extends AppCompatActivity implements View.OnClickListen
         routine.addSubroutine(subroutine);
         System.out.println("Hola?");
 
+        program_data.setRoutine(routine);
+
         Intent intent = new Intent(this,MakeRoutine.class);
-        intent.putExtra("routine-R-M", routine);
+        intent.putExtra("global_data", program_data);
         startActivity(intent);
 
 

@@ -25,6 +25,8 @@ public class Welcome extends AppCompatActivity {
     EditText user_text;
     EditText password_text;
     Switch rememberme_switch;
+    Data program_data;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,21 +38,16 @@ public class Welcome extends AppCompatActivity {
         password_text = (EditText) findViewById(R.id.editText2);
         rememberme_switch = (Switch) findViewById(R.id.switch_sesion);
 
+        program_data = new Data();
+        program_data.setPort(STANDAR_PORT);
+
 
     }
 
     public void sendMessage(View view) {
-        /*
+
         Intent intent = new Intent(this, HomePage.class);
-        EditText editText = (EditText) findViewById(R.id.input_user);
-        String message = editText.getText().toString();
-        intent.putExtra(EXTRA_MESSAGE, message);
-        startActivity(intent);*/
-
-
-
-        Intent intent = new Intent(this, MakeRoutine.class);
-        intent.putExtra("STANDAR_PORT", (Serializable)STANDAR_PORT);
+        intent.putExtra("global_data", program_data);
         startActivity(intent);
     }
 

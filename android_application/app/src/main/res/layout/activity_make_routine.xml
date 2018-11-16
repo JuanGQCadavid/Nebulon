@@ -19,7 +19,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/back"
-            android:onClick="back"/>
+            android:visibility="invisible"/>
 
         <TextView
 
@@ -36,7 +36,7 @@
 
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/next"
+            android:src="@drawable/success"
             android:onClick="next"
             />
 
@@ -117,10 +117,6 @@
                 android:orientation="horizontal"
                 android:layout_gravity="top|center">
 
-                <Button
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Regresar"/>
 
                 <Button
                     android:id="@+id/agregar_btn"
