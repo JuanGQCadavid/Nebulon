@@ -26,3 +26,6 @@ fi
 # Restart units
 sudo systemctl restart wpa_supplicant@wlan0.service
 sudo systemctl restart dhcpcd.service
+
+# Send my private IP address to the server
+./send_ip_update.py

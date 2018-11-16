@@ -1,7 +1,8 @@
-#!/bin/python
+#!/bin/python3
 
 import sys # argv, stderr, exit()
-from database_connection import Connection
+import os # os.environ.get
+import socket
 
 # Instead of this will go the liquid level sensor information
 # Temporary libraries
@@ -14,31 +15,39 @@ def generateRandom():
 
 if __name__ == '__main__':
 
-    if len(sys.argv) != 2:
-        print('Usage: message_transmission.py <database_info_file>', file = sys.stderr)
-        sys.exit()
+    try:
 
-    # argv[1]: path to database info file
-    databaseInfo = open(sys.argv[1], 'r')
+        liquid_level = generateRandom()
 
-    # List that will contain the information
-    info = ['', '', '', '']
+    except:
+
+        print("Error getting liquid level data", file=sys.stderr)
+        exit()
+
+    # Build the necessary json
+    try:
+        #    Nebulizer id
+        neb_id = os.environ.get('NEB_ID')
+        
+    except:
+        
+        print("Error trying to get the environment variable NEB_ID", file=sys.stderr)
+
+        
+    json = "\"message_type\":\"neb_to_server_llu\",\n\t\"nebulon_id\":%s,\n\t\"nebulon_liquid_level\":%d\n}" % (neb_id, liquid_level)
+
+    message_size = len(json) + 21
     
-    # read file and split by lines
-    if databaseInfo.mode == 'r':
-        info = databaseInfo.read().splitlines()
-    else:
-        print('Error opening database information file with \'read\' permissions', file = sys.stderr)
-        sys.exit()
+    json_aux = ("{\n\t\"message_size\":%d,\n\t" % (message_size + len(str(message_size))))
 
-    
-    # Connecting to database
-    # info = [user, pass, host, db_name]
-    connection = Connection(info[0], info[1], info[2], info[3])
+    json = json_aux + json
 
-    while True:
-
-        # Make update (liquid_level)
-        connection.updateField('nebulon_liquid_level', str(generateRandom()), str(0))
-        # Send that information each 5 seconds
-        time.sleep(5)
+    # Send the JSON
+    try:
+        remote_server = os.environ.get('REMOTE_SERVER')
+        socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        socket.connect((remote_server, 17777))
+        socket.send(str.encode(json))
+        socket.close()
+    except:
+        print("socket: Error trying to send the json to the remote server", file=sys.stderr)

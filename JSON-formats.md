@@ -31,7 +31,7 @@
 ```
 
   * neb_to_server_ipu stands for nebulon to server ip address update
-  * "##.##.##.##" is the nebulon's private ip address
+  * ##.##.##.## stands for the ip address of the nebulizer
 
 ## From Mobile App
 

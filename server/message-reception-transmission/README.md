@@ -3,10 +3,11 @@
 1. Install the packages 'gcc', 'g++' and 'make'.
 2. Download the library RapidJSON from ``` https://github.com/Tencent/rapidjson.git ```.
   2.1. Include the folder ``` rapidjson/include/rapidjson ``` into ``` ./include/ ```.
-3. Have ``` mysql ``` installed.
+3. Have ``` mysql ``` installed. See database section for more information. And ...
+   ``` sudo apt install libmysqlclient-dev ```
 4. Run.
    ``` $ make ```
-   ``` $ ./bin/server ```
+   ``` $ ./bin/server <path/to/dbinfo>```
 
 -------------------------
 

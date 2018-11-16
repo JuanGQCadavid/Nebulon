@@ -146,13 +146,19 @@ main(int argc, char* argv[]){
 				       std::to_string(json["nebulon_id"].GetInt()).c_str() );
 		  
 	      
-	      else if( strcmp(message_type, "neb_to_server_ipu") == 0 )
+	      else if( strcmp(message_type, "neb_to_server_ipu") == 0 ){
+
+		std::string ip("\"");
+		ip.append(json["nebulon_ip_address"].GetString());
+		ip.append("\"");
+		
 		// Make update_query
 		mysql -> update_query( "nebulon", "nebulon_private_ip",
-				       json["nebulon_ip_address"].GetString(), "nebulon_id",
+				       ip.c_str(), "nebulon_id",
 				       std::to_string(json["nebulon_id"].GetInt()).c_str() );
 		
-	      else if( strcmp(message_type, "app_to_server_ipr") == 0 ){
+		
+	      }else if( strcmp(message_type, "app_to_server_ipr") == 0 ){
 
 		// making JSON response --------------------
 		
