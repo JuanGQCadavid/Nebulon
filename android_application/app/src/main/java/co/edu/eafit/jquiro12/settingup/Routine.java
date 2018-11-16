@@ -1,14 +1,20 @@
 package co.edu.eafit.jquiro12.settingup;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class Routine {
+public class Routine implements Serializable {
     private int id;
     private String name;
     private String description;
     private ArrayList<Subroutine> subroutines;
 
     public Routine(){
+        subroutines = new ArrayList<>();
+
+        id=0;
+        name = "";
+        description = "";
 
     }
 
@@ -19,6 +25,11 @@ public class Routine {
         this.subroutines = subroutines;
     }
 
+    public void addSubroutine(Subroutine subroutine){
+        subroutines.add(subroutine);
+
+
+    }
     public int getId() {
         return id;
     }

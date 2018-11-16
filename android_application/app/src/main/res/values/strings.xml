@@ -7,6 +7,10 @@
     <string name="switch_session">Remember me</string>
     <string name="text_wrong">Wrong user credential</string>
 
+    <string name="titlulo_pickers">Obtener fecha y hora</string>
+    <string name="formato_fecha">dd/mm/yyyy</string>
+    <string name="formato_hora">hh:mm</string>
+
     <string-array name="network_options">
         <item>0</item>
         <item>1</item>

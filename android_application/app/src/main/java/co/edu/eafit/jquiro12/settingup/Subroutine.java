@@ -1,28 +1,46 @@
 package co.edu.eafit.jquiro12.settingup;
 
-public class Subroutine {
+import java.io.Serializable;
+
+public class Subroutine  implements Serializable {
     private int id;
     //Days
     private boolean monday;
     private boolean tuesday;
     private boolean wednesday;
-    private boolean tursday;
+    private boolean thursday;
     private boolean friday;
     private boolean saturday;
     private boolean sunday;
 
     //Limits
 
-    private int from_start;
-    private int from_end;
+    private String from_hour;
+    private String from_minute;
 
-    private int till_start;
-    private int till_end;
+    private String till_hour;
+    private String till_minute;
 
     private int frequency;
 
-    public Subroutine (){
+    public Subroutine() {
 
+    }
+
+    public Subroutine(int id, boolean monday, boolean tuesday, boolean wednesday, boolean thursday, boolean friday, boolean saturday, boolean sunday, String from_hour, String from_minute, String till_hour, String till_minute, int frequency) {
+        this.id = id;
+        this.monday = monday;
+        this.tuesday = tuesday;
+        this.wednesday = wednesday;
+        this.thursday = thursday;
+        this.friday = friday;
+        this.saturday = saturday;
+        this.sunday = sunday;
+        this.from_hour = from_hour;
+        this.from_minute = from_minute;
+        this.till_hour = till_hour;
+        this.till_minute = till_minute;
+        this.frequency = frequency;
     }
 
     public Subroutine(int id) {
@@ -61,12 +79,12 @@ public class Subroutine {
         this.wednesday = wednesday;
     }
 
-    public boolean isTursday() {
-        return tursday;
+    public boolean isThursday() {
+        return thursday;
     }
 
-    public void setTursday(boolean tursday) {
-        this.tursday = tursday;
+    public void setThursday(boolean thursday) {
+        this.thursday = thursday;
     }
 
     public boolean isFriday() {
@@ -93,36 +111,36 @@ public class Subroutine {
         this.sunday = sunday;
     }
 
-    public int getFrom_start() {
-        return from_start;
+    public String getFrom_hour() {
+        return from_hour;
     }
 
-    public void setFrom_start(int from_start) {
-        this.from_start = from_start;
+    public void setFrom_hour(String from_hour) {
+        this.from_hour = from_hour;
     }
 
-    public int getFrom_end() {
-        return from_end;
+    public String getFrom_minute() {
+        return from_minute;
     }
 
-    public void setFrom_end(int from_end) {
-        this.from_end = from_end;
+    public void setFrom_minute(String from_minute) {
+        this.from_minute = from_minute;
     }
 
-    public int getTill_start() {
-        return till_start;
+    public String getTill_hour() {
+        return till_hour;
     }
 
-    public void setTill_start(int till_start) {
-        this.till_start = till_start;
+    public void setTill_hour(String till_hour) {
+        this.till_hour = till_hour;
     }
 
-    public int getTill_end() {
-        return till_end;
+    public String getTill_minute() {
+        return till_minute;
     }
 
-    public void setTill_end(int till_end) {
-        this.till_end = till_end;
+    public void setTill_minute(String till_minute) {
+        this.till_minute = till_minute;
     }
 
     public int getFrequency() {

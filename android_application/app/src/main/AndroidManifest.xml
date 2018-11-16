@@ -24,7 +24,9 @@
         <activity android:name=".ConfigureNebulones" />
         <activity android:name=".LoadingNebulizer" />
         <activity android:name=".routineMain" />
-        <activity android:name=".CheckNebulones"></activity>
+        <activity android:name=".CheckNebulones" />
+        <activity android:name=".MakeRoutine" />
+        <activity android:name=".RoutineDays"></activity>
     </application>
 
 </manifest>

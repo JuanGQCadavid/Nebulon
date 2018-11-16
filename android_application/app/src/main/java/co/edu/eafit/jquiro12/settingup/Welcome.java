@@ -49,7 +49,7 @@ public class Welcome extends AppCompatActivity {
 
 
 
-        Intent intent = new Intent(this, HomePage.class);
+        Intent intent = new Intent(this, MakeRoutine.class);
         intent.putExtra("STANDAR_PORT", (Serializable)STANDAR_PORT);
         startActivity(intent);
     }
