@@ -13,7 +13,7 @@
   3. Activate the virtual environment:
      ``` $ source venv/bin/activate ```
   4. Install flask (be careful, you have to have the virtual environment activated):
-     ``` $ pip install flask ```
+     ``` $ pip install flask flask-mysql ```
   5. 
 
 

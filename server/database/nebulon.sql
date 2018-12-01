@@ -1,6 +1,6 @@
-CREATE DATABASE IF NOT EXISTS nebulon_database;
+CREATE DATABASE IF NOT EXISTS nebulon;
 
-USE nebulon_database;
+USE nebulon;
 
 CREATE TABLE IF NOT EXISTS company(
   company_id int NOT NULL,
