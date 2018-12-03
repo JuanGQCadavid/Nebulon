@@ -30,8 +30,11 @@
    
    ``` MariaDB [(none)]> UPDATE mysql.user SET plugin = '' WHERE plugin = 'unix_socket'; ```
    
-   Remove or comment skip-grant-tabes in the my.cnf, and restart mysql daemon. Now you can
-   log in with password.
+   Remove or comment skip-grant-tabes in the my.cnf, and restart mysql daemon. Now you can log in with password.
+
+   If updating the plugin does not work, update the password like this:
+   ``` UPDATE user SET password = PASSWORD('your_pass') WHERE user = 'root'; ```
+   Remove or comment skip-grant-tabes in the my.cnf, and restart mysql daemon. Now you can log in with password.
 
 6. Create database.
    ``` $ mysql -u root -p < nebulon_database.sql ```
@@ -50,26 +53,6 @@
    ``` SHOW GRANTS FOR 'nebulonHJGR'@'localhost'; ```
 4. If you need to revoke a privilege:
    ``` REVOKE type_of_permission ON database_name.table_name FROM ‘username’@‘localhost’; ```
-
---------------------------------------
-
-### Open Mariadb (Mysql) to the world. (Remote LogIn)
-
-# Guide: https://mariadb.com/kb/en/library/configuring-mariadb-for-remote-client-access/
-
-1. Comment the line bind-addres = <some-ip-address> in the my.cnf file.
-   Note: my.cnf file is usually located at /etc/mysql/mariadb.conf.d/50-server.cnf
-
-2. Create new user and give privileges to it.
-   Note: root@localhost is different from root@<some-ip>
-   ``` MariaDB [none]> GRANT ALL PRIVILEGES ON *.* TO 'user'@'%' IDENTIFIED BY 'nebulon-database' WITH GRANT OPTION; ```
-
-3. Open port 3306.
-   ``` $ sudo iptables -A INPUT -i eth0 -p tcp -m tcp --dport 3306 -j ACCEPT ```
-
-4. Add rule to Azure to open port 3306
-
-5. Add skip-name-resolve to the my.cnf (WARNING! Bad practice)
    
 --------------------------------------
 
