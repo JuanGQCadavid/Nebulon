@@ -6,17 +6,38 @@
 
 {% block content %}
 
-<table>
-  <tr>
-    <th>Company</th>
-    <th>Liquid level</th>
-  </tr>
-  
-  <tr>
-    <th>Exito</th>
-    <th>15%</th>
-  </tr>
-  
-</table>
+<div class="table-responsive">
+  <table class="table table-striped">
+
+    <thead class="thead-dark">
+      <tr>
+	<th class="text-center">Company</th>
+	<th class="text-center">Fragrance 1</th>
+	<th class="text-center">Fragrance 2</th>
+	<th colspan="2" class="text-center">Contract</th>
+	<th>&nbsp;</th>
+      </tr>
+
+      <tr>
+	<th>&nbsp;</th>
+	<th>&nbsp;</th>
+	<th>&nbsp;</th>
+	<th class="text-center">Starting date</th>
+	<th class="text-center">Ending date</th>
+	<th>&nbsp;</th>
+      </tr>
+    </thead class="thead-light">  
+    
+    <tr>
+      <td class="text-center">Exito</td>
+      <td class="text-center">15%</td>
+      <td class="text-center">15%</td>
+      <td class="text-center">2018/09/04</td>
+      <td class="text-center">2019/09/04</td>
+      <td class="text-center"><button type="button" formaction="{{ url_for('management.index') }}"class="btn btn-primary">Update</button></td>
+    </tr>
+    
+  </table>
+</div>
 
 {% endblock %}
