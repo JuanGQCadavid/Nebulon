@@ -13,7 +13,8 @@
     "message_size" : ###(int),
     "message_type" : "neb_to_server_llu",
     "nebulon_id" : ##(int),
-    "nebulon_liquid_level" : ###(int)
+    "fragrance" : 1, // Or 2 in case of fragrance number 2
+    "liquid_level" : ###(int)
 }
 ```
 
@@ -152,6 +153,18 @@
 
   * serv_to_app_ips stands for server to app ip addresses
   * ##.##.##.## indicates the nebulon's private IP(v4 or v6)
+
+2. Response to the authentication requested before
+
+```
+{
+    "message_size":##,
+    "message_type":"server_to_app_logrs",
+    "state":"accepted" // or "rejected"
+}
+```
+
+  * set_to_app_logr stands for server to app login response
   
 ## From Nebulon
 

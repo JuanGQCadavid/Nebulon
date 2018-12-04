@@ -4,13 +4,14 @@ USE nebulon;
 
 CREATE TABLE IF NOT EXISTS staff(
   staff_id varchar(45) NOT NULL, -- Identity card
-  staff_user varchar(45) NOT NULL,
+  staff_username varchar(45) NOT NULL,
   staff_password varchar(100) NOT NULL,
   staff_level int NOT NULL, -- CEO, employee, ...
   staff_name varchar(60) NOT NULL,
   staff_phone varchar(20) NOT NULL,
   staff_email varchar(60) NOT NULL,
-  PRIMARY KEY(staff_id)
+  PRIMARY KEY(staff_id),
+  UNIQUE KEY(staff_username)
 );
 
 CREATE TABLE IF NOT EXISTS company(
@@ -60,24 +61,18 @@ CREATE TABLE IF NOT EXISTS nebulon_spec(
   PRIMARY KEY(spec_id)
 );
 
-CREATE TABLE IF NOT EXISTS liquid_load(
-  liquid_load_id int NOT NULL AUTO_INCREMENT,
-  liquid_load_fg1name varchar(50) NOT NULL,
-  liquid_load_fg1level int NOT NULL,
-  liquid_load_fg2name varchar(50) NOT NULL,
-  liquid_load_fg2level int NOT NULL,
-);
-
 CREATE TABLE IF NOT EXISTS nebulon(
   nebulon_id int NOT NULL,
-  nebulon_state varchar(45) NOT NULL,
+  nebulon_state varchar(45) NULL,
   nebulon_private_ip varchar(40),	
   nebulon_purchase_date timestamp NOT NULL,
+  nebulon_fg1name varchar(50) NULL,
+  nebulon_fg1level int NULL,
+  nebulon_fg2name varchar(50) NULL,
+  nebulon_fg2level int NULL,  
   spec_id int NOT NULL,
   loan_id int NULL,
-  liquid_load_id int NULL,
   PRIMARY KEY(nebulon_id),
   CONSTRAINT fk_nebulon_spec_id FOREIGN KEY(spec_id) REFERENCES nebulon_spec(spec_id),
-  CONSTRAINT fk_nebulon_loan_id FOREIGN KEY(loan_id) REFERENCES loan(loan_id),
-  CONSTRAINT fk_nebulon_liquid_load_id FOREIGN KEY(liquid_load_id) REFERENCES liquid_load(liquid_load_id)
+  CONSTRAINT fk_nebulon_loan_id FOREIGN KEY(loan_id) REFERENCES loan(loan_id)
 );

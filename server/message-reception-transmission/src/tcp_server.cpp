@@ -21,8 +21,11 @@ void open_connection_to_database(MySQLConnection *&mysql, char* file);
 
 /* Function that constructs a json response to a previous request 
    (ip addresses request by app) and stores the result in 'json_response' */
-void build_response(Document& json, MySQLConnection* mysql, std::string& json_response, int response_type,
-		    const char* email, const char* password);
+void build_response(std::string& json_response, int response_type, Document& json, MySQLConnection* mysql,
+		    const char* username = NULL, const char* password = NULL);
+
+/* Function that sends a json error response */
+void send_error_response(int client_socket_fd);
 
 int
 main(int argc, char* argv[]){
@@ -117,113 +120,162 @@ main(int argc, char* argv[]){
 	// Analyze data received and store it in MySQL or send it to a nebulizer
 	Document json;
 
-	if( json.Parse(message).HasParseError() )
+	if( json.Parse(message).HasParseError() ){
+	  
 	  fprintf(stderr, "The message received doesn't have the proper JSON format:\n%s\n", message);
-	else{
+	  // Error in the json format
+	  send_error_response(client_socket_fd);
+	  
+	}else{
 
 	  // If the root is an object
 	  if( json.IsObject() && json.HasMember("message_type") ){
 	
 	    const char* message_type = json["message_type"].GetString();
 
-	    // Message received from nebulon or mobile app
-	    if( (strcmp(message_type, "neb_to_server_llu") == 0)
-		|| (strcmp(message_type, "neb_to_server_ipu") == 0)
-		|| (strcmp(message_type, "app_to_server_ipr") == 0)
-		|| (strcmp(message_type, "app_to_server_logr") == 0)){
+	    // database controller object
+	    MySQLConnection *mysql;
+	    
+	    // initializes the controller
+	    open_connection_to_database(mysql, argv[1]);
 
-	      // database controller object
-	      MySQLConnection *mysql;
+	    // Liquid level update request ---------
+	    if( strcmp(message_type, "neb_to_server_llu") == 0 ){
 
-	      // initializes the controller
-	      open_connection_to_database(mysql, argv[1]);
-
-	      if( strcmp(message_type, "neb_to_server_llu") == 0 )
-		
-		// Make update_query
-		mysql -> update_query( "nebulon", "nebulon_liquid_level",
-				       std::to_string(json["nebulon_liquid_level"].GetInt()).c_str(), "nebulon_id",
-				       std::to_string(json["nebulon_id"].GetInt()).c_str() );
-		  
+	      // Query that will be executed
+	      std::string query("UPDATE nebulon SET ");
 	      
-	      else if( strcmp(message_type, "neb_to_server_ipu") == 0 ){
+	      int fragrance;
+	      if( json.HasMember("fragrance") )
+		fragrance = json["fragrance"].GetInt();
+	      else
+		// Error in the json format
+		send_error_response(client_socket_fd);
+		
+	      
+	      
+	      if(fragrance == 1)
+		query.append("nebulon_fg1level = ");
+	      else if(fragrance == 2)
+		query.append("nebulon_fg2level = ");
+	      else
+		// Error in the json format
+		send_error_response(client_socket_fd);
+	      
 
-		std::string ip("\"");
-		ip.append(json["nebulon_ip_address"].GetString());
-		ip.append("\"");
-		
-		// Make update_query
-		mysql -> update_query( "nebulon", "nebulon_private_ip",
-				       ip.c_str(), "nebulon_id",
-				       std::to_string(json["nebulon_id"].GetInt()).c_str() );
-		
-		
-	      }else if( strcmp(message_type, "app_to_server_ipr") == 0 ){
+	      int liquid_level;
+	      if( json.HasMember("liquid_level") )
+		liquid_level = json["liquid_level"].GetInt();
+	      else
+		// Error in the json format
+		send_error_response(client_socket_fd);
+	      
+	      query.append(std::to_string(liquid_level));
+	      query.append(" WHERE nebulon_id = ");
+	      
+	      int nebulon_id;
+	      if( json.HasMember("nebulon_id") )
+		nebulon_id = json["nebulon_id"].GetInt();
+	      else
+		// Error in the json format
+		send_error_response(client_socket_fd);
+	      
+	      query.append(std::to_string(nebulon_id));
 
-		// making JSON response --------------------
+	      mysql -> make_query(query.c_str(), false);
+	      
+	    }
+	    // -----------------------------------------------------------------
+	    // Private ip update request ---------
+	    else if( strcmp(message_type, "neb_to_server_ipu") == 0 ){
+
+	      // Query that will be executed
+	      std::string query("UPDATE nebulon SET nebulon_private_ip = '");
+
+	      if( json.HasMember("nebulon_ip_address") )
+		query.append(json["nebulon_ip_address"].GetString());
+	      else
+		// Error in the json format
+		send_error_response(client_socket_fd);
+
+	      query.append("' WHERE nebulon_id = ");
+
+	      int nebulon_id;
+	      if( json.HasMember("nebulon_id") )
+		nebulon_id = json["nebulon_id"].GetInt();
+	      else
+		// Error in the json format
+		send_error_response(client_socket_fd);
+	      
+	      query.append(std::to_string(nebulon_id));
+
+	      mysql -> make_query(query.c_str(), false);
+	      
+	    }
+	    // -----------------------------------------------------------------
+	    // Private ip retrieve request ---------
+	    else if( strcmp(message_type, "app_to_server_ipr") == 0 ){
+
+	      std::string json_response;
+	      
+	      build_response(json_response, 0, json, mysql);	       
+	      
+	      if( send(client_socket_fd, json_response.c_str(), json_response.size(), 0) == -1 )
+		perror("send()");
+	      
+	    }
+	    // -----------------------------------------------------------------
+	    // Authentication request ---------
+	    else if( strcmp(message_type, "app_to_server_logr") == 0 ){
+
+	      json["username"].GetString(), json["password"].GetString();
+	      
+	      if( json.HasMember("username") && json.HasMember("password") ){
 		
 		std::string json_response;
-
-		build_response(json, mysql, json_response, 0, NULL, NULL);
-
-		// END making JSON response --------------------
-
-		// send() -----------------------------
-
-		if( send(client_socket_fd, json_response.c_str(), json_response.size(), 0) == -1 )
-		  perror("send()");
-
-		// END send() ---------------------------
-	      }else if( strcmp(message_type, "app_to_server_logr") == 0 ){
-
-		// making JSON response --------------------
-		
-		std::string json_response;
-		
-		build_response(json, mysql, json_response, 1,
-			       json["username"].GetString(), json["password"].GetString());
-		
-		// END making JSON response --------------------
-		
-		// send() -----------------------------
+		build_response(json_response, 1, json, mysql,
+			       json["username"].GetString(), json["password"].GetString());	       
 		
 		if( send(client_socket_fd, json_response.c_str(), json_response.size(), 0) == -1 )
 		  perror("send()");
 		
-		// END send() ---------------------------
-	      }
-
-	      // deleting dynamic allocation for mysql
-	      delete mysql;
+	      }else
+		// Error in the json format
+		send_error_response(client_socket_fd);
 	      
 	    }else
-	      // 'message' does not have a valid message_type
-	      fprintf(stderr, "CHILD: Message with unrecognized type: %s\n", message_type);
+	      // Error in the json format
+	      send_error_response(client_socket_fd);
 
-	  }else
+	    // deleting dynamic allocation for mysql
+	    delete mysql;
+	      
+	  }else{
 	    // 'message' is not and object or it has not he member 'message_type'
 	    fprintf(stderr, "CHILD: I cannot understand the message:\n%s\n", message);
-	  
+	    send_error_response(client_socket_fd);
+	  }
 	}
-      
+	
       }catch(std::exception &e){
 	fprintf(stderr, "CHILD: Exception occured: %s\n", e.what());
+	
       }
-
+      
       close(client_socket_fd);
       printf("CHILD: Connection from %s closed!\n", address);
       exit(0);
-	
+      
     }
     // parent
     
     // END fork() --------------------------------
-
+    
   }
   // END accept() and recv() -------------
   
   close(server_socket_fd);
-
+  
   return 0;
 }
 
@@ -394,69 +446,91 @@ open_connection_to_database(MySQLConnection *&mysql, char* file){
 }
 
 void
-build_response(Document& json, MySQLConnection* mysql, std::string& json_response, int response_type,
+build_response(const char* values, std::string& json_response, int response_type){
+  
+  switch(response_type){
+    
+  case 0: // ips request
+
+    json_response = "\t\"message_type\":\"serv_to_app_ips\",\n\t\"nebulons_ips\":[\n";
+    json_response.append(values);
+    json_response.append("\t]\n}");
+    
+    break;
+    
+  case 1: // authentication request
+    break;
+    
+  case 2: // error
+    break;
+  }
+}
+
+void
+build_response(std::string& json_response, int response_type, Document& json, MySQLConnection* mysql,
 	       const char* username, const char* password){
 
   if( response_type == 0 ){
     json_response = "\t\"message_type\":\"serv_to_app_ips\",\n\t\"nebulons_ips\":[\n";
 
-    const Value& nebulons_ids = json["nebulons_ids"];
-    for( SizeType it = 0; it < nebulons_ids.Size(); ++it ){
+    if( json.HasMember("nebulon_ids") ){
+     
+      const Value& nebulons_ids = json["nebulons_ids"];
+      for( SizeType it = 0; it < nebulons_ids.Size(); ++it ){
 
-      char* neb_privateip;
-      std::string condition("nebulon_id = " + std::to_string(nebulons_ids[it].GetInt()));
+	std::string neb_id = std::to_string(nebulons_ids[it].GetInt());
+	std::string neb_privateip;
+
+	std::string query("SELECT nebulon_private_ip FROM nebulon WHERE nebulon_id = ");
+	query.append(neb_id);
     
-      const char* neb_id = std::to_string(nebulons_ids[it].GetInt()).c_str();
-    
-      // Makes a select query, and stores the result in neb_privateip
-      mysql -> select_query( "nebulon_private_ip", "nebulon", condition.c_str(),
-			     neb_privateip );
+	// Makes a select query, and stores the result in neb_privateip
+	neb_privateip = mysql -> make_query(query.c_str(), true);
 
-      json_response.append("\t\t{\n\t\t\t\"neb_id\":");
-      json_response.append(neb_id);
-      json_response.append(",\n\t\t\t\"neb_ip\":\"");
-      json_response.append(neb_privateip);
-      json_response.append("\"\n\t\t}");
+	json_response.append("\t\t{\n\t\t\t\"neb_id\":");
+	json_response.append(neb_id);
+	json_response.append(",\n\t\t\t\"neb_ip\":\"");
+	json_response.append(neb_privateip);
+	json_response.append("\"\n\t\t}");
 
-      if( (it + 1) < nebulons_ids.Size() )
-	json_response.append(",\n");
-      else
-	json_response.append("\n");
-    }
+	if( (it + 1) < nebulons_ids.Size() )
+	  json_response.append(",\n");
+	else
+	  json_response.append("\n");
+      }
 
-    json_response.append("\t]\n}");
-    std::string json_aux = "{\n\t\"message_size\":";
+      json_response.append("\t]\n}");
+      std::string json_aux = "{\n\t\"message_size\":";
 
-    int message_size = json_response.size() + json_aux.size();
-    // +2: the comma and the \n
-    message_size += ( std::to_string(message_size).size() + 2 );
-    json_aux.append( (std::to_string(message_size) += ",\n") );
-    json_aux.append( json_response );
-    json_response = json_aux;
+      int message_size = json_response.size() + json_aux.size();
+      // +2: the comma and the \n
+      message_size += ( std::to_string(message_size).size() + 2 );
+      json_aux.append( (std::to_string(message_size) += ",\n") );
+      json_aux.append( json_response );
+      json_response = json_aux;
+
+    }else
+      response_type = 2;
 
   } else if( response_type == 1 ){
    
     json_response = "\t\"message_type\":\"serv_to_app_logrs\",\n\t\"state\":";
 
-    char* exist;
-    
-    std::string condition("username = '");
-    condition.append(username);
-    condition.append("' AND ");
-    condition.append(" password = '");
-    condition.append(password);
-    condition.append("'");
-    
-    // Makes a select query, and stores the result in neb_privateip
-    mysql -> select_query( "count(*)", "auth_user", condition.c_str(),
-			   exist );
+    std::string query("SELECT count(*) FROM staff WHERE staff_username = ");
+    query.append(username);
+    query.append(" AND staff_password = ");
+    query.append(password);
 
-    int number = atoi(exist);
+    std::string exists;
+    exists = mysql -> make_query(query.c_str(), true);
+    int number = std::stoi(exists);
 
     if(number > 0)
       json_response.append("\"accepted\"\n");
     else
       json_response.append("\"rejected\"\n");
+    
+    char* exist;
     
     json_response.append("}");
     std::string json_aux = "{\n\t\"message_size\":";
@@ -469,7 +543,21 @@ build_response(Document& json, MySQLConnection* mysql, std::string& json_respons
     json_response = json_aux;
    
   }
+
   
+  if( response_type == 2 ){
+    json_response = "{\n\t\"message_size\":55,\n\t\"error\":\"Wrong request format\"\n}";
+  }
+  
+}
+
+void
+send_error_response(int client_socket_fd){
+  Document null_json;
+  std::string json_response;
+  build_response(json_response, 2, null_json, NULL);
+  if( send(client_socket_fd, json_response.c_str(), json_response.size(), 0) == -1 )
+    perror("send()");  
 }
 
 /* ---------- END MAIN FUNCTIONS ---------- */

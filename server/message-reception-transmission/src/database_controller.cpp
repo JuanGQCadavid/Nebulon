@@ -23,75 +23,35 @@ MySQLConnection::~MySQLConnection(){
   printf("Connection to database closed\n");
 }
 
-void
-MySQLConnection::update_query(const char* table,
-			      const char* set_attribute, const char* set_value,
-			      const char* where_attribute, const char* where_value){
+std::string
+MySQLConnection::make_query(const char* query,
+			    bool select){
 
-  // Holds a MySQL query
-  // UPDATE $table SET $set_attribute = $set_value WHERE $where_attribute = $where_value
-  // The mysql_query() function does not require the ';' at the end
-  std::string query;
-
-  query = "UPDATE ";
-  query.append(table);
-  query.append(" SET ");
-  query.append(set_attribute);
-  query.append(" = ");
-  query.append(set_value);
-  query.append(" WHERE ");
-  query.append(where_attribute);
-  query.append(" = ");
-  query.append(where_value);
-
-  printf("Making query: %s\n", query.c_str());
-
-  // returns 0 on success
-  if( mysql_query(connection, query.c_str()) )
-    
-    fprintf(stderr, "Error making update query: %s\n", mysql_error(connection));
-    
-}
-
-void
-MySQLConnection::select_query(const char* field, const char* table,
-			      const char* condition, char *&fetched_value){
+  // Execute the query
+  printf("Making query: %s\n", query);
   
-  // The mysql_query() function does not require the ';' at the end
-  std::string query;
-
-  query = "SELECT ";
-  query.append(field);
-  query.append(" FROM ");
-  query.append(table);
-  query.append(" WHERE ");
-  // query.append(where_attribute);
-  // query.append(" = ");
-  // query.append(where_value);
-  query.append(condition);
-
-  printf("Making query: %s\n", query.c_str());
-
   // returns 0 on success
-  if( mysql_query(connection, query.c_str()) )
+  if( mysql_query(connection, query) )    
+    fprintf(stderr, "Error making query: %s\n", mysql_error(connection));
+
+  // Obtain the retreived values if it was a SELECT query
+  if( select ){
+    std::string fetched_value;
     
-    fprintf(stderr, "Error making select query: %s\n", mysql_error(connection));
-
-  MYSQL_RES *result = mysql_store_result(connection);
-
-  if( result == NULL )
-    fprintf(stderr, "No values retrieved in select query: %s\n", mysql_error(connection));
-  
-  else{
-
-    MYSQL_ROW row;
-
-    row = mysql_fetch_row(result);
-
-    fetched_value = row[0];
-
-    mysql_free_result(result);
+    MYSQL_RES *result = mysql_store_result(connection);
     
+    if( result == NULL )
+      fprintf(stderr, "No values retrieved in select query: %s\n", mysql_error(connection));
+    
+    else{
+
+      MYSQL_ROW row;
+      row = mysql_fetch_row(result);
+      fetched_value = row[0];
+      
+    }
+
+    return fetched_value;
   }
-    
+  return "";
 }

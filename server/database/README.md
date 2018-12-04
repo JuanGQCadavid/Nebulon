@@ -44,16 +44,20 @@
      
 --------------------------------------
 
-### Compatibility between TCP Server and database
+### Compatibility between web server, TCP Server and database
 
-1. Create new user ``` CREATE USER 'nebulonHJGR'@'localhost' IDENTIFIED BY 'password-already-defined'; ```.
-2. Grant UPDATE, SELECT privileges:
-   ``` GRANT ALL PRIVILEGES ON nebulon_database.* TO 'nebulonHJGR'@'localhost'; ```
+1. Create new user
+   ``` CREATE USER 'nebulon'@'localhost' IDENTIFIED BY 'password-already-defined'; ```.
+2. Grant privileges:
+   ``` GRANT ALL PRIVILEGES ON nebulon.* TO 'nebulon'@'localhost' IDENTIFIED BY 'password-already-defined'; ```
 3. Check for granted privileges:
    ``` SHOW GRANTS FOR 'nebulonHJGR'@'localhost'; ```
-4. If you need to revoke a privilege:
+4. Flush privileges;
+   ``` FLUSH PRIVILEGES; ```
+5. If you need to revoke a privilege:
    ``` REVOKE type_of_permission ON database_name.table_name FROM ‘username’@‘localhost’; ```
-   
+
+
 --------------------------------------
 
 ### Install Mysql not Mariadb

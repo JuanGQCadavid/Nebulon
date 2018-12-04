@@ -5,6 +5,14 @@
   2.1. Include the folder ``` rapidjson/include/rapidjson ``` into ``` ./include/ ```.
 3. Have ``` mysql ``` installed. See database section for more information. And ...
    ``` sudo apt install libmysqlclient-dev ```
+
+4. Create the file that contains the database information with the following format:
+   ``` <user>
+       <password>
+       <host>
+       <database>
+       <port> ```
+   For host use 'localhost', for database use 'nebulon' and for port use '0'. All without quotes.
 4. Run.
    ``` $ make ```
    ``` $ ./bin/server <path/to/dbinfo>```
