@@ -32,7 +32,7 @@ using namespace rapidjson;
 /* -------- MACROS -------- */
 
 // Ports under 1024 are reserved, and you can use them only if you are ROOT
-#define PORT "17777"
+#define PORT "5001"
 
 // Maximum waiting queue
 #define BACKLOG 10
