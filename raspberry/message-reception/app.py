@@ -2,6 +2,7 @@ import socket
 import sys
 import os
 from _thread import *
+import subprocess
 import json
 # Hostname -I
 
@@ -22,7 +23,35 @@ def threaded_getID(conn):
     conn.close()
 
 
-def threaded_setWiFi(conn):
+def threaded_setWiFi(conn, jsonObject):
+    script_dir = "../network-connection/src/connect_to.sh"
+    network_list = jsonObject["network"]
+    
+
+    sec_type = network_list["security_type"]
+    ssid = network_list["ssid"]
+
+    if sec_type == "0":
+        subprocess.run([script_dir,
+                        sec_type,
+                        "\"" + ssid + "\""])
+    if sec_type == "1":
+        password = network_list["password"]
+        subprocess.run([script_dir,
+                        sec_type,
+                        "\"" + ssid + "\"",
+                        "\"" + password + "\""])
+        
+    if sec_type == "2":
+        password = network_list["password"]
+        user = network_list["user"]
+        
+        subprocess.run([script_dir,
+                        sec_type,
+                        "\"" + ssid + "\"",
+                        "\"" + password + "\"",
+                        "\"" + user + "\""])
+    
     conn.close()
     pass
 
@@ -47,7 +76,7 @@ def threaded_client(conn):
                 break;
         
         elif(message_type == "app_to_neb_net"):
-                threaded_setWiFi(conn)
+                threaded_setWiFi(conn,data_object)
                 break;
         else:
             reply = "404"

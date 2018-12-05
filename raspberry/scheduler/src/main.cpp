@@ -51,10 +51,6 @@ main(int argc, char *argv[]){
       std::cerr << "Error opening file: " << argv[2] << std::endl;
       return 1;
     }
-
-    // Needed header for Cron
-    cron << "SHELL=/bin/sh\n";
-    cron << "CRON_TZ=America/Bogota\n\n";
     
     // Days of the week
     const char* days[] = {"monday", "tuesday", "wednesday", "thursday", "friday",
@@ -114,7 +110,7 @@ create_job(std::ofstream& cron, const char* day, const char* start, const char*e
   cron << s_min << " " << s_hour << " ";
 
   // day month and month, always the same values
-  cron << "*/32 * ";
+  cron << "* * ";
 
   // end = "23:30"
   e_hour = std::stoi(hours[2]);
@@ -137,14 +133,15 @@ create_job(std::ofstream& cron, const char* day, const char* start, const char*e
     cron << "7 ";
 
   // command
-  cron << "/home/bean7/drive/workspace/university/eight-semester/p1/";
-  cron << "project/Nebulon/raspberry/message-transmission/src/message_transmission.py ";
+  cron << "python3 /home/pi/workspace/Nebulon/raspberry/activation/src/activator.py ";
 
   // arguments for the command
   float total_working_time;
-  total_working_time = (float)(e_hour - s_hour) + ((float)(abs(e_min - s_min) / (float)100));
+  //total_working_time = (float)(e_hour + e_min) + ((float)())
+  //total_working_time = (float)(e_hour - s_hour) + ((float)(abs(e_min - s_min) / (float)100));
 
-  cron << total_working_time << " ";
+  //cron << total_working_time << " ";
+  cron << 10.0 << " ";
 
   cron << working_time << " ";
   cron << sleeping_time << " ";

@@ -31,7 +31,7 @@ if __name__ == '__main__':
 
         remote_server = os.environ.get('REMOTE_SERVER')
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        sock.connect((remote_server, 17777))
+        sock.connect((str(remote_server), 17777))
         sock.send(str.encode(json))
         sock.close()
         

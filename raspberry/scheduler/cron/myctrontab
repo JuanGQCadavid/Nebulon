@@ -1,8 +1,1 @@
-# Shell
-SHELL=/bin/sh
-
-# Time zone
-CRON_TZ=America/Bogota
-
-# * * * * * command
-
+45 15 * * 4 python3 /home/pi/workspace/Nebulon/raspberry/activation/src/activator.py 10 00:01 00:01 1
