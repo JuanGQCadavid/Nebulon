@@ -12,8 +12,8 @@ def create_app(test_config = None):
         # Used for flask to secure things
         SECRET_KEY = 'dev',
         # Database stuff
-        MYSQL_DATABASE_USER = 'root',
-        MYSQL_DATABASE_PASSWORD = 'password',
+        MYSQL_DATABASE_USER = 'nebulon',
+        MYSQL_DATABASE_PASSWORD = 'nebulon',
         MYSQL_DATABASE_DB = 'nebulon',
         MYSQL_DATABASE_HOST = 'localhost'
     )
@@ -32,8 +32,8 @@ def create_app(test_config = None):
         pass
 
     # Database initialization
-    #from . import database
-    #database.init_app(app)
+    from . import database
+    database.init_app(app)
 
     # Blueprints
     # 1. Authentication and user (installators) creation
@@ -43,6 +43,5 @@ def create_app(test_config = None):
     from . import management
     app.register_blueprint(management.blueprint)
     
-
     return app
     
