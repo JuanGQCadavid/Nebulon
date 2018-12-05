@@ -9,17 +9,17 @@
 if [ $1 -eq 0 ]
 then
     
-    ./add_network_bin $1 "$2"
+    /home/pi/workspace/Nebulon/raspberry/network-connection/src/add_network_bin $1 "$2"
     
 elif [ $1 -eq 1 ]
 then
     
-    ./add_network_bin $1 "$2" "$3"
+    /home/pi/workspace/Nebulon/raspberry/network-connection/src/add_network_bin $1 "$2" "$3"
     
 elif [ $1 -eq 2 ]
 then
     
-    ./add_network_bin $1 "$2" "$3" "$4"    
+    /home/pi/workspace/Nebulon/raspberry/network-connection/src/add_network_bin $1 "$2" "$3" "$4"    
     
 fi
 
@@ -27,5 +27,5 @@ fi
 sudo systemctl restart wpa_supplicant@wlan0.service
 sudo systemctl restart dhcpcd.service
 
-# Send my private IP address to the server
-./send_ip_update.py
+# Send ip to remote server
+python3 /home/pi/workspace/Nebulon/raspberry/network-connection/src/send_ip_update.py

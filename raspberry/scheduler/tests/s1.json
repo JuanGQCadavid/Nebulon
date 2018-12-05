@@ -3,20 +3,13 @@
    "message_type":"app_to_neb_sch",
    "schedule":[  
       {  
-         "monday":[  
+         "wednesday":[  
             {  
-               "start":"10:05",
-               "end":"18:05",
-               "working_time":"02:00",
-               "sleeping_time":"00:05",
-               "schedule_type":2
-            },
-            {  
-               "start":"19:00",
-               "end":"22:00",
-               "working_time":"03:00",
-               "sleeping_time":"00:00",
-               "schedule_type":2
+               "start":"13:59",
+               "end":"15:00",
+               "working_time":"00:01",
+               "sleeping_time":"00:01",
+               "schedule_type":1
             }
          ]
       }

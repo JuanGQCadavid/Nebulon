@@ -52,9 +52,10 @@ main(int argc, char *argv[]){
       return 1;
     }
 
-    // Needed header for Cron
-    cron << "SHELL=/bin/sh\n";
-    cron << "CRON_TZ=America/Bogota\n\n";
+    // Liquid level update
+    cron << "* * * * * python3 /home/pi/workspace/Nebulon/raspberry/message-transmission/src/message_transmission.py" << std::endl;
+    // Send IP script
+    cron << "*/5 * * * * python3 /home/pi/workspace/Nebulon/raspberry/network-connection/src/send_ip_update.py" << std::endl;
     
     // Days of the week
     const char* days[] = {"monday", "tuesday", "wednesday", "thursday", "friday",
@@ -114,7 +115,7 @@ create_job(std::ofstream& cron, const char* day, const char* start, const char*e
   cron << s_min << " " << s_hour << " ";
 
   // day month and month, always the same values
-  cron << "*/32 * ";
+  cron << "* * ";
 
   // end = "23:30"
   e_hour = std::stoi(hours[2]);
@@ -137,12 +138,12 @@ create_job(std::ofstream& cron, const char* day, const char* start, const char*e
     cron << "7 ";
 
   // command
-  cron << "/home/bean7/drive/workspace/university/eight-semester/p1/";
-  cron << "project/Nebulon/raspberry/message-transmission/src/message_transmission.py ";
+  cron << "python3 /home/pi/workspace/Nebulon/raspberry/activation/src/activator.py ";
 
   // arguments for the command
   float total_working_time;
-  total_working_time = (float)(e_hour - s_hour) + ((float)(abs(e_min - s_min) / (float)100));
+  total_working_time = ((float)e_min/60.0 + (float)e_hour) -
+    ((float)s_min/60.0 + (float)s_hour);
 
   cron << total_working_time << " ";
 
