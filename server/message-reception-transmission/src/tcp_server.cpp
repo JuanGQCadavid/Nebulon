@@ -25,7 +25,7 @@ void build_response(std::string& json_response, int response_type, Document& jso
 		    const char* username = NULL, const char* password = NULL);
 
 /* Function that sends a json error response */
-void send_error_response(int client_socket_fd);
+void send_error_response(int client_socket_fd, int type);
 
 int
 main(int argc, char* argv[]){
@@ -113,6 +113,8 @@ main(int argc, char* argv[]){
       char message[MAX_MESSAGE_SIZE];
       receive_message(client_socket_fd, message, address);
 
+      printf("Message received %s\n", message);
+
       // END recv() --------------------------------
 
       try{
@@ -124,7 +126,7 @@ main(int argc, char* argv[]){
 	  
 	  fprintf(stderr, "The message received doesn't have the proper JSON format:\n%s\n", message);
 	  // Error in the json format
-	  send_error_response(client_socket_fd);
+	  send_error_response(client_socket_fd, 2);
 	  
 	}else{
 
@@ -150,7 +152,7 @@ main(int argc, char* argv[]){
 		fragrance = json["fragrance"].GetInt();
 	      else
 		// Error in the json format
-		send_error_response(client_socket_fd);
+		send_error_response(client_socket_fd, 2);
 		
 	      
 	      
@@ -160,7 +162,7 @@ main(int argc, char* argv[]){
 		query.append("nebulon_fg2level = ");
 	      else
 		// Error in the json format
-		send_error_response(client_socket_fd);
+		send_error_response(client_socket_fd, 2);
 	      
 
 	      int liquid_level;
@@ -168,7 +170,7 @@ main(int argc, char* argv[]){
 		liquid_level = json["liquid_level"].GetInt();
 	      else
 		// Error in the json format
-		send_error_response(client_socket_fd);
+		send_error_response(client_socket_fd, 2);
 	      
 	      query.append(std::to_string(liquid_level));
 	      query.append(" WHERE nebulon_id = ");
@@ -178,7 +180,7 @@ main(int argc, char* argv[]){
 		nebulon_id = json["nebulon_id"].GetInt();
 	      else
 		// Error in the json format
-		send_error_response(client_socket_fd);
+		send_error_response(client_socket_fd, 2);
 	      
 	      query.append(std::to_string(nebulon_id));
 
@@ -196,7 +198,7 @@ main(int argc, char* argv[]){
 		query.append(json["nebulon_ip_address"].GetString());
 	      else
 		// Error in the json format
-		send_error_response(client_socket_fd);
+		send_error_response(client_socket_fd, 2);
 
 	      query.append("' WHERE nebulon_id = ");
 
@@ -205,7 +207,7 @@ main(int argc, char* argv[]){
 		nebulon_id = json["nebulon_id"].GetInt();
 	      else
 		// Error in the json format
-		send_error_response(client_socket_fd);
+		send_error_response(client_socket_fd, 2);
 	      
 	      query.append(std::to_string(nebulon_id));
 
@@ -241,11 +243,11 @@ main(int argc, char* argv[]){
 		
 	      }else
 		// Error in the json format
-		send_error_response(client_socket_fd);
+		send_error_response(client_socket_fd, 2);
 	      
 	    }else
 	      // Error in the json format
-	      send_error_response(client_socket_fd);
+	      send_error_response(client_socket_fd, 2);
 
 	    // deleting dynamic allocation for mysql
 	    delete mysql;
@@ -253,7 +255,7 @@ main(int argc, char* argv[]){
 	  }else{
 	    // 'message' is not and object or it has not he member 'message_type'
 	    fprintf(stderr, "CHILD: I cannot understand the message:\n%s\n", message);
-	    send_error_response(client_socket_fd);
+	    send_error_response(client_socket_fd, 2);
 	  }
 	}
 	
@@ -388,27 +390,49 @@ receive_message(int client_socket_fd, char* message, char* client_ip_address){
 
   // MAX_MESSAGE_SIZE - 1: avoids writing to the null byte character
   if( (bytes_read = recv(client_socket_fd, message, MAX_MESSAGE_SIZE - 1, 0)) == -1 ){
-	  
+
     perror("recv()");
-    close(client_socket_fd);
     printf("CHILD: Connection from %s closed!\n", client_ip_address);
+    send_error_response(client_socket_fd, 3);
+    close(client_socket_fd);
     exit(0);
 	  
   }else if( bytes_read == 0 ){
     // no message and peer closed the connection
-    close(client_socket_fd);
     printf("CHILD: Connection from %s closed!\n", client_ip_address);
+    send_error_response(client_socket_fd, 3);
+    close(client_socket_fd);
     exit(0);
   }
       
   // Obtain message size
   int message_size;
   get_number_in_header(message, &message_size);
-      
+  
   // Read missing part of the message
-  while( bytes_read != message_size )
-	
-    bytes_read += recv(client_socket_fd, message + bytes_read, (MAX_MESSAGE_SIZE - 1) - bytes_read, 0);
+  // if bytes_read > message_size is because the message_size sent is shorter thanr it should be␇
+  while( bytes_read != message_size && bytes_read < message_size ){
+
+    int current_bytes_read;
+    current_bytes_read = recv(client_socket_fd, message + bytes_read, (MAX_MESSAGE_SIZE - 1) - bytes_read, 0);
+    
+    if( current_bytes_read == 0 ){
+      
+      printf("CHILD: Connection from %s closed!\n", client_ip_address);
+      send_error_response(client_socket_fd, 3);      
+      close(client_socket_fd);
+      exit(0);
+      
+    }else if( current_bytes_read == -1 ){
+      perror("recv()");
+      printf("CHILD: Connection from %s closed!\n", client_ip_address);
+      send_error_response(client_socket_fd, 3);
+      close(client_socket_fd);
+      exit(0);
+    }
+    
+    bytes_read += current_bytes_read;
+  }
 
   message[bytes_read] = '\0'; // null byte to mark the end of the message
 	
@@ -473,7 +497,7 @@ build_response(std::string& json_response, int response_type, Document& json, My
   if( response_type == 0 ){
     json_response = "\t\"message_type\":\"serv_to_app_ips\",\n\t\"nebulons_ips\":[\n";
 
-    if( json.HasMember("nebulon_ids") ){
+    if( json.HasMember("nebulons_ids") ){
      
       const Value& nebulons_ids = json["nebulons_ids"];
       for( SizeType it = 0; it < nebulons_ids.Size(); ++it ){
@@ -547,15 +571,17 @@ build_response(std::string& json_response, int response_type, Document& json, My
   
   if( response_type == 2 ){
     json_response = "{\n\t\"message_size\":55,\n\t\"error\":\"Wrong request format\"\n}";
+  }else if( response_type == 3){
+    json_response = "{\n\t\"message_size\":97,\n\t\"error\":\"Error receiving your message, check the message_size attribute\"\n}";
   }
   
 }
 
 void
-send_error_response(int client_socket_fd){
+send_error_response(int client_socket_fd, int type){
   Document null_json;
   std::string json_response;
-  build_response(json_response, 2, null_json, NULL);
+  build_response(json_response, type, null_json, NULL);
   if( send(client_socket_fd, json_response.c_str(), json_response.size(), 0) == -1 )
     perror("send()");  
 }

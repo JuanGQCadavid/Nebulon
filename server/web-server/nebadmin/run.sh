@@ -4,4 +4,4 @@
 export FLASK_APP=nebadmin
 export FLASK_ENV=development
 
-flask run
+flask run -h '0.0.0.0'
