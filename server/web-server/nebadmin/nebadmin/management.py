@@ -20,7 +20,7 @@ def index():
     # - Execute query
     cursor.execute('SELECT c.company_name, '\
                    'n.nebulon_fg1name, n.nebulon_fg1level, '\
-                   'n.nebulon_f2name, n.nebulon_fg2level, '\
+                   'n.nebulon_fg2name, n.nebulon_fg2level, '\
                    'l.loan_starting_date, l.loan_ending_date '\
                    'FROM nebulon AS n '\
                    'INNER JOIN loan AS l ON n.loan_id = l.loan_id '\
@@ -28,4 +28,14 @@ def index():
     nebulizers = cursor.fetchall()
     
     return render_template('management/index.html', nebulizers = nebulizers)
+
+@blueprint.route('/update')
+def update_liquid_level():
     
+    db = get_db()
+    cursor = db.cursor()
+
+    cursor.execute('SELECT n.nebulon_fg1level, n.nebulon_fg2level FROM nebulon AS n')
+    levels = cursor.fetchall()
+
+    return levels

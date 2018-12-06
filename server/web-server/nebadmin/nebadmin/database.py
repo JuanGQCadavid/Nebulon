@@ -1,18 +1,23 @@
-from flaskext.mysql import MySQL
-from flask import g
-
-mysql = None
-connection = None
+import pymysql
+from flask import g, current_app
 
 # Called when handling requests
 def get_db():
+    
     if 'db' not in g:
-        g.db = mysql.connect()
+        connection = pymysql.connect(host='localhost',
+                                     user='nebulon',
+                                     password='nebulon',
+                                     db='nebulon',
+                                     cursorclass=pymysql.cursors.DictCursor
+        )
+        
+        g.db = connection
 
     return g.db
 
 # Automatically called when the request is ended
-def close_db():
+def close_db(e = None):
     db = g.pop('db', None)
 
     if db is not None:
@@ -21,5 +26,3 @@ def close_db():
 # Called in the app factory
 def init_app(app):
     app.teardown_appcontext(close_db)
-    mysql = MySQL()
-    mysql.init_app(app)

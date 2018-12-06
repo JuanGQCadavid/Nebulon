@@ -10,12 +10,7 @@ def create_app(test_config = None):
     # Default configuration
     app.config.from_mapping(
         # Used for flask to secure things
-        SECRET_KEY = 'dev',
-        # Database stuff
-        MYSQL_DATABASE_USER = 'nebulon',
-        MYSQL_DATABASE_PASSWORD = 'nebulon',
-        MYSQL_DATABASE_DB = 'nebulon',
-        MYSQL_DATABASE_HOST = 'localhost'
+        SECRET_KEY = 'dev'
     )
 
     if test_config is None:
@@ -33,7 +28,8 @@ def create_app(test_config = None):
 
     # Database initialization
     from . import database
-    database.init_app(app)
+    with app.app_context():
+        database.init_app(app)
 
     # Blueprints
     # 1. Authentication and user (installators) creation

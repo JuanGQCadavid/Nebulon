@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 {% block header %}
-<h1>{% block title %}Monitoring{% endblock %}</h1>
+<h1 class="text-center">{% block title %}Monitoring{% endblock %}</h1>
 {% endblock %}
 
 {% block content %}
@@ -27,17 +27,25 @@
 	<th>&nbsp;</th>
       </tr>
     </thead class="thead-light">  
+
+    {% for nebulizer in nebulizers %}
+
+    row = 1
     
     <tr>
-      <td class="text-center">Exito</td>
-      <td class="text-center">15%</td>
-      <td class="text-center">15%</td>
-      <td class="text-center">2018/09/04</td>
-      <td class="text-center">2019/09/04</td>
+      <td class="text-center">{{ nebulizer['company_name'] }}</td>
+      <td id="{{ 'lvl' + str(row) }}" class="text-center">{{ nebulizer['nebulon_fg1name'] }}: {{ nebulizer['nebulon_fg1level'] }}%</td>
+      <td id="{{ 'lvl2' + str(row) }}" class="text-center">{{ nebulizer['nebulon_fg2name'] }}: {{ nebulizer['nebulon_fg2level'] }}%</td>
+      <td class="text-center">{{ nebulizer['loan_starting_date'] }}</td>
+      <td class="text-center">{{ nebulizer['loan_ending_date'] }}</td>
       <td class="text-center"><button type="button" formaction="{{ url_for('management.index') }}"class="btn btn-primary">Update</button></td>
     </tr>
+
+    {% endfor %}
     
   </table>
 </div>
+
+<script src=""></script>
 
 {% endblock %}
