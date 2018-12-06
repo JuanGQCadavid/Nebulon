@@ -7,7 +7,7 @@
 {% block content %}
 
 <div class="table-responsive">
-  <table class="table table-striped">
+  <table id="nebulizer-info" class="table table-striped">
 
     <thead class="thead-dark">
       <tr>
@@ -29,13 +29,11 @@
     </thead class="thead-light">  
 
     {% for nebulizer in nebulizers %}
-
-    row = 1
     
     <tr>
       <td class="text-center">{{ nebulizer['company_name'] }}</td>
-      <td id="{{ 'lvl' + str(row) }}" class="text-center">{{ nebulizer['nebulon_fg1name'] }}: {{ nebulizer['nebulon_fg1level'] }}%</td>
-      <td id="{{ 'lvl2' + str(row) }}" class="text-center">{{ nebulizer['nebulon_fg2name'] }}: {{ nebulizer['nebulon_fg2level'] }}%</td>
+      <td class="text-center">{{ nebulizer['nebulon_fg1name'] }}: {{ nebulizer['nebulon_fg1level'] }}%</td>
+      <td class="text-center">{{ nebulizer['nebulon_fg2name'] }}: {{ nebulizer['nebulon_fg2level'] }}%</td>
       <td class="text-center">{{ nebulizer['loan_starting_date'] }}</td>
       <td class="text-center">{{ nebulizer['loan_ending_date'] }}</td>
       <td class="text-center"><button type="button" formaction="{{ url_for('management.index') }}"class="btn btn-primary">Update</button></td>
@@ -46,6 +44,6 @@
   </table>
 </div>
 
-<script src=""></script>
+<script src="{{ url_for('static', filename='js/autoupdate.js') }}"></script>
 
 {% endblock %}
