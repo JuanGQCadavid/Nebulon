@@ -51,6 +51,11 @@ main(int argc, char *argv[]){
       std::cerr << "Error opening file: " << argv[2] << std::endl;
       return 1;
     }
+
+    // Liquid level update
+    cron << "* * * * * python3 /home/pi/workspace/Nebulon/raspberry/message-transmission/src/message_transmission.py" << std::endl;
+    // Send IP script
+    cron << "*/5 * * * * python3 /home/pi/workspace/Nebulon/raspberry/network-connection/src/send_ip_update.py" << std::endl;
     
     // Days of the week
     const char* days[] = {"monday", "tuesday", "wednesday", "thursday", "friday",
@@ -137,11 +142,10 @@ create_job(std::ofstream& cron, const char* day, const char* start, const char*e
 
   // arguments for the command
   float total_working_time;
-  //total_working_time = (float)(e_hour + e_min) + ((float)())
-  //total_working_time = (float)(e_hour - s_hour) + ((float)(abs(e_min - s_min) / (float)100));
+  total_working_time = ((float)e_min/60.0 + (float)e_hour) -
+    ((float)s_min/60.0 + (float)s_hour);
 
-  //cron << total_working_time << " ";
-  cron << 10.0 << " ";
+  cron << total_working_time << " ";
 
   cron << working_time << " ";
   cron << sleeping_time << " ";

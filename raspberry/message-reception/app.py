@@ -49,12 +49,25 @@ def threaded_setWiFi(conn, jsonObject):
         subprocess.run([script_dir,
                         sec_type,
                         "\"" + ssid + "\"",
-                        "\"" + password + "\"",
-                        "\"" + user + "\""])
+                        "\"" + user + "\"",
+                        "\"" + password+ "\""])
     
     conn.close()
     pass
 
+
+def threaded_schedule(conn, schedule):
+    print("OEOEOEO  " + json.dumps(schedule,sort_keys=True,indent=4, separators=(',', ':')))
+    os.remove("schedule.json")
+    json_file = open("schedule.json", "w+")
+    json_file.write(json.dumps(schedule,sort_keys=True,indent=4, separators=(',', ':')))
+    json_file.close()
+
+    scheduler = "../scheduler/bin/scheduler"
+    subprocess.run([scheduler, "schedule.json", "../scheduler/cron/mycrontab"])
+
+    conn.close()
+    
 
 def threaded_client(conn):
     while True:
@@ -73,20 +86,24 @@ def threaded_client(conn):
 
         if(message_type == "id_request"):
                 threaded_getID(conn)
-                break;
+                break
         
         elif(message_type == "app_to_neb_net"):
                 threaded_setWiFi(conn,data_object)
-                break;
+                break
+        elif(message_type == "app_to_neb_sch"):
+            threaded_schedule(conn, data_object)
+            break
+        
         else:
             reply = "404"
 
             print(reply)
             conn.sendall(str.encode(reply))
             conn.close()
-            break;
+            break
         
-        break;
+        break
         
 
         

@@ -27,5 +27,5 @@ fi
 sudo systemctl restart wpa_supplicant@wlan0.service
 sudo systemctl restart dhcpcd.service
 
-# Send my private IP address to the server
-/home/pi/workspace/Nebulon/raspberry/network-connection/src/send_ip_update.py
+# Send ip to remote server
+python3 /home/pi/workspace/Nebulon/raspberry/network-connection/src/send_ip_update.py
