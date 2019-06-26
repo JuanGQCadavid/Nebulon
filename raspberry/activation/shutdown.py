@@ -20,3 +20,4 @@ def stop():
     GPIO.output(pin_lock_rigth, False)
     GPIO.output(pin_lock_left, False)
     GPIO.output(pin_general, False)
+    GPIO.cleanup()

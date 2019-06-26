@@ -31,7 +31,7 @@ import RPi.GPIO as GPIO
 import time
 import sys
 import signal
-import .shutdown
+import shutdown
 
 # Usage.
 def usage():
@@ -51,25 +51,20 @@ signal.signal(signal.SIGINT, signal_handler)
 # Command line arguments.
 args = sys.argv
 
-# Convert hours into seconds.
 try:
+    # Convert hours into seconds.
     t_alive = float(args[1]) * 60 * 60
-    t_work = float ((args[2]).split(":")[0]) * 60 * 60
-    + float((args[2]).split(":")[1]) * 60
-    t_sleep = float((args[3]).split(":")[0]) * 60 * 60
-    + float((args[3]).split(":")[1]) * 60
+    t_work = float ((args[2]).split(":")[0]) * 60 * 60 \
+             + float((args[2]).split(":")[1]) * 60
+    t_sleep = float((args[3]).split(":")[0]) * 60 * 60 \
+              + float((args[3]).split(":")[1]) * 60
     fragrance_id = args[4]
 
-    print(str(t_work) + " - " + str(t_sleep))
+    print(t_work, "-", t_sleep)
 except:
     print("Error: Command line argumments in the wrong format.",
           file=sys.stderr)
     usage()
-
-# Setup time variables.
-t_start = time.time()
-t_running = 0
-t_working = 0
 
 # Pin setup.
 pin_general = 7
@@ -80,6 +75,11 @@ GPIO.setmode(GPIO.BOARD)
 GPIO.setup(pin_general,GPIO.OUT)
 GPIO.setup(pin_lock_left,GPIO.OUT)
 GPIO.setup(pin_lock_rigth,GPIO.OUT)
+
+# Setup time variables.
+t_start = time.time()
+t_running = 0
+t_working = 0
 
 # Main loop. Activates or deactivates the emanators.
 while  t_running < t_alive:
